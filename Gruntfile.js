@@ -9,7 +9,7 @@ module.exports = function( grunt ) {
 
 		addtextdomain: {
 			options: {
-				textdomain: 'image-auto-tagger',
+				textdomain: 'taghound-media-tagger',
 			},
 			target: {
 				files: {
@@ -30,8 +30,8 @@ module.exports = function( grunt ) {
 			target: {
 				options: {
 					domainPath: '/languages',
-					mainFile: 'image-auto-tagger.php',
-					potFilename: 'image-auto-tagger.pot',
+					mainFile: 'taghound-media-tagger.php',
+					potFilename: 'taghound-media-tagger.pot',
 					potHeaders: {
 						poedit: true,
 						'x-poedit-keywordslist': true

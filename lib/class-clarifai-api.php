@@ -1,5 +1,5 @@
 <?php
-namespace Image_Auto_Tagger;
+namespace Taghound_Media_Tagger;
 
 class Clarifai_API {
 	/**
@@ -60,7 +60,7 @@ class Clarifai_API {
 	 * @return array Token object
 	 */
 	protected function get_auth_token() {
-		$token = get_option(IAT_TOKEN_SETTING);
+		$token = get_option(TMT_TOKEN_SETTING);
 
 		if ( !$token || $this->is_token_expired($token) ) {
 			return $this->renew_auth_token();
@@ -90,7 +90,7 @@ class Clarifai_API {
 		// Calculate the expiration date of this token
 		$results['expiration_date'] = time() + $results['expires_in'];
 
-		update_option(IAT_TOKEN_SETTING, $results);
+		update_option(TMT_TOKEN_SETTING, $results);
 
 		return $results;
 	}

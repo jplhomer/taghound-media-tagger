@@ -1,0 +1,15 @@
+tr.compat-field-tmt-tag-editor {
+	display: none;
+}
+
+.tmt-tag-row td {
+	display: block;
+}
+
+.modal-open .ac_results {
+	z-index: 170000;
+}
+
+.upload-php .ac_results {
+	transform: translateY(-2rem);
+}
