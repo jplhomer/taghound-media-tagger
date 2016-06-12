@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Image Auto Description
+ * Plugin Name: Image Auto Tagger
  * Version: 0.1-alpha
- * Description: Automatically adds a description to new images using the Clarifai API.
+ * Description: Automatically adds tags to new images using the Clarifai API.
  * Author: Joshua P. Larson
  * Author URI: http://jplhomer.org
  * Plugin URI: http://jplhomer.org
- * Text Domain: image-auto-description
+ * Text Domain: image-auto-tagger
  * Domain Path: /languages
- * @package Image-auto-description
+ * @package Image-auto-tagger
  */
 
 include 'taxonomies/image_tag.php';
@@ -39,7 +39,7 @@ function get_tags_from_api( $local_file_path ) {
 	);
 
 	$headers = array(
-		'Authorization: Bearer <TOKEN>',
+		'Authorization: Bearer <token>',
 	);
 
 	$target_url = 'https://api.clarifai.com/v1/tag/';
