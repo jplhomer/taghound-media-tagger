@@ -35,6 +35,19 @@ class Clarifai_API {
 		$this->client_secret = $options['client_secret'];
 	}
 
+	/**
+	 * Determines if a token object is expired using a custom value we calculate
+	 * @param  array  $token  Token with 'expiration_date'
+	 * @return boolean
+	 */
+	protected function is_token_expired( $token ) {
+		return time() > $token['expiration_date'];
+	}
+
+	/**
+	 * Gets the API keys set on the object
+	 * @return array
+	 */
 	protected function get_api_keys() {
 		return array(
 			'client_id' => $this->client_id,
@@ -42,10 +55,24 @@ class Clarifai_API {
 		);
 	}
 
+	/**
+	 * Gets the auth token. Generates ones if it's invalid or expired.
+	 * @return array Token object
+	 */
 	protected function get_auth_token() {
-		return get_option(IAT_TOKEN_SETTING);
+		$token = get_option(IAT_TOKEN_SETTING);
+
+		if ( !$token || $this->is_token_expired($token) ) {
+			return $this->renew_auth_token();
+		}
+
+		return $token;
 	}
 
+	/**
+	 * Get a new auth token
+	 * @return array Auth token array
+	 */
 	protected function renew_auth_token() {
 		$keys = $this->get_api_keys();
 
@@ -60,27 +87,40 @@ class Clarifai_API {
 
 		$results = $this->_make_request( $args, true );
 
-		update_option(IAT_TOKEN_SETTING, $results['access_token']);
+		// Calculate the expiration date of this token
+		$results['expiration_date'] = time() + $results['expires_in'];
+
+		update_option(IAT_TOKEN_SETTING, $results);
+
+		return $results;
 	}
 
 	/**
 	 * Get tags for an image
 	 * @param  string $image_path File path to image
-	 * @return array              Array of tags
+	 * @return array              Array ( tags => array, doc_id => int )
 	 */
-	public static function get_tags_for_image( $image_path ) {
+	public function get_tags_for_image( $image_path ) {
 		$args = array(
 			'endpoint' => 'tag',
 			'post' => array(
-				'encoded_data' => new CURLFile( $image_path ),
+				'encoded_data' => new \CURLFile( $image_path ),
 			),
 		);
 
-		$results = $this->_make_request( $args );
+		try {
+			$results = $this->_make_request( $args );
 
-		$tags = $results['results'][0]['result']['tag']['classes'];
+			$tags = $results['results'][0]['result']['tag']['classes'];
+			$doc_id = $results['results'][0]['docid'];
 
-		return $tags;
+			return array(
+				'tags' => $tags,
+				'doc_id' => $doc_id,
+			);
+		} catch ( \Exception $e ) {
+			return $e;
+		}
 	}
 
 	/**
@@ -88,9 +128,10 @@ class Clarifai_API {
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
 		if ( ! $authenticating ) {
+			$token = $this->get_auth_token();
 			$args = wp_parse_args( $args, array(
 				'headers' => array(
-					"Authorization: Bearer {$this->get_auth_token()}",
+					"Authorization: Bearer {$token['access_token']}",
 				),
 			));
 		}
@@ -108,10 +149,13 @@ class Clarifai_API {
 		}
 
 		$result = curl_exec($ch);
+
+		if ( ! $result ) {
+			throw new \Exception( curl_error($ch) );
+		}
+
 		curl_close($ch);
 
-		$result = json_decode( $result, true );
-
-		return $result;
+		return json_decode( $result, true );
 	}
 }
