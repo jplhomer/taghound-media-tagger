@@ -1,5 +1,5 @@
 # Taghound Media Tagger #
-**Contributors:** jplhomer  
+**Contributors:** [jplhomer](https://profiles.wordpress.org/jplhomer)  
 **Tags:** media gallery, tagging, images, deep learning, neural network, admin  
 **Requires at least:** 3.9  
 **Tested up to:** 4.5  
@@ -76,16 +76,16 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 ## Screenshots ##
 
 ### 1. Tags are automatically applied to images when added to the media library ###
-![Tags are automatically applied to images when added to the media library](http://s.wordpress.org/extend/plugins/taghound-media-tagger/screenshot-1.png)
+![Tags are automatically applied to images when added to the media library](http://ps.w.org/taghound-media-tagger/assets/screenshot-1.png)
 
 ### 2. Tags are searchable from within the media library ###
-![Tags are searchable from within the media library](http://s.wordpress.org/extend/plugins/taghound-media-tagger/screenshot-2.png)
+![Tags are searchable from within the media library](http://ps.w.org/taghound-media-tagger/assets/screenshot-2.png)
 
 ### 3. Tags are searchable from within the Insert Media modal window when editing a post, too ###
-![Tags are searchable from within the Insert Media modal window when editing a post, too](http://s.wordpress.org/extend/plugins/taghound-media-tagger/screenshot-3.png)
+![Tags are searchable from within the Insert Media modal window when editing a post, too](http://ps.w.org/taghound-media-tagger/assets/screenshot-3.png)
 
 ### 4. Filter media items by a specific tag when using the list view of the media library ###
-![Filter media items by a specific tag when using the list view of the media library](http://s.wordpress.org/extend/plugins/taghound-media-tagger/screenshot-4.png)
+![Filter media items by a specific tag when using the list view of the media library](http://ps.w.org/taghound-media-tagger/assets/screenshot-4.png)
 
 
 ## Changelog ##

@@ -19,6 +19,9 @@ module.exports = function( grunt ) {
 		},
 
 		wp_readme_to_markdown: {
+			options: {
+				screenshot_url: 'http://ps.w.org/{plugin}/assets/{screenshot}.png'
+			},
 			your_target: {
 				files: {
 					'README.md': 'readme.txt'
