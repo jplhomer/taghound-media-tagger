@@ -62,7 +62,7 @@ class Usage {
 	 * @param String $name Throttle set name monthly|hourly
 	 * @return Array 	   Throttle set or empty array
 	 */
-	protected function get_throttle_set( String $name ) {
+	protected function get_throttle_set( \String $name ) {
 		$throttle_set = array();
 
 		$filtered = array_filter( $this->response['results']['user_throttles'], function($a) use ($name) {
