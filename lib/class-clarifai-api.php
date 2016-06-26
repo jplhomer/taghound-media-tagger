@@ -145,6 +145,8 @@ class Client {
 	 * Performs the general API request
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
+		$is_post = !empty( $args['post'] );
+
 		if ( ! $authenticating ) {
 			$is_post = !empty( $args['post'] );
 			$token = $this->get_auth_token();
@@ -164,7 +166,7 @@ class Client {
 		if ( $is_post ) {
 			curl_setopt($ch, CURLOPT_POST, 1);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
-		}		
+		}
 
 		if ( ! empty($args['headers']) ) {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $args['headers']);
