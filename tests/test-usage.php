@@ -100,7 +100,7 @@ class UsageTest extends WP_UnitTestCase {
 		$this->assertEquals( 'monthly', $usage->monthly['name'] );
 		$this->assertEquals( 'hourly', $usage->hourly['name'] );
 
-		$other_usage = new Usage( $this->no_throttle );
+		$other_usage = new Usage( $this->hourly_throttle );
 		$this->assertEquals( 'monthly', $other_usage->monthly['name'] );
 		$this->assertEquals( 'hourly', $other_usage->hourly['name'] );
 	}
