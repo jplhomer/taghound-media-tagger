@@ -149,13 +149,13 @@ class Settings {
 
 		echo "<h3>Taghound - Clarifai API Usage</h3>";
 
-		if ( ! is_array($usage) ) {
+		if ( ! is_a( $usage, 'Taghound_Media_Tagger\Clarifai\API\Usage' ) ) {
 			echo "We had trouble loading your Clarifai API usage. Please try again later.";
 			return;
 		}
 
-		$monthly = $usage[0];
-		$hourly = $usage[1];
+		$monthly = $usage->monthly;
+		$hourly = $usage->hourly;
 
 		echo "<p>You have used <strong>{$monthly['consumed']}/{$monthly['limit']}</strong> units this month.";
 		echo "<p>You have used <strong>{$hourly['consumed']}/{$hourly['limit']}</strong> units this hour.";

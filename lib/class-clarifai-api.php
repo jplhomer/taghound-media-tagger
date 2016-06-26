@@ -125,7 +125,7 @@ class Client {
 
 	/**
 	 * Get usage data for a user's account
-	 * @return array Array of objects: Hourly and Monthly throttles
+	 * @return Usage object or Exception
 	 */
 	public function get_usage_data() {
 		$args = array(
@@ -135,7 +135,7 @@ class Client {
 		try {
 			$results = $this->_make_request( $args );
 
-			return $results['results']['user_throttles'];
+			return new Usage( $results );
 		} catch ( \Exception $e ) {
 			return $e;
 		}
@@ -148,7 +148,6 @@ class Client {
 		$is_post = !empty( $args['post'] );
 
 		if ( ! $authenticating ) {
-			$is_post = !empty( $args['post'] );
 			$token = $this->get_auth_token();
 			$args = wp_parse_args( $args, array(
 				'headers' => array(
