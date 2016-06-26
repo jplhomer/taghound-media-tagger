@@ -62,7 +62,7 @@ class Client {
 	protected function get_auth_token() {
 		$token = get_option(TMT_TOKEN_SETTING);
 
-		if ( !$token || $this->is_token_expired($token) ) {
+		if ( !$token || empty($token['access_token']) || $this->is_token_expired($token) ) {
 			return $this->renew_auth_token();
 		}
 
