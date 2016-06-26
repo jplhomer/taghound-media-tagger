@@ -1,7 +1,7 @@
 <?php
-namespace Taghound_Media_Tagger;
+namespace Taghound_Media_Tagger\Clarifai\API;
 
-class Clarifai_API {
+class Client {
 	/**
 	 * Current API version
 	 * @var string

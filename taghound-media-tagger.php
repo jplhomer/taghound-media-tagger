@@ -112,10 +112,10 @@ class Taghound_Media_Tagger {
 
 	/**
 	 * Gets the Clarifai API client for usage
-	 * @return Clarifai_API Clarifai API Client
+	 * @return Client 	Clarifai API Client
 	 */
 	public function get_cf_client() {
-		$cf = new Clarifai_API( array(
+		$cf = new Client( array(
 			'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
 			'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
 		));
@@ -128,7 +128,7 @@ class Taghound_Media_Tagger {
 	 * @param int $post_id  WP Post ID for attachment
 	 * @param object $cf    (optional) Pass in the API class. Used only for testing.
 	 */
-	public function handle_add_attachment( $post_id, $cf = null ) {
+	public function handle_add_attachment( $post_id, Client $cf = null ) {
 		// Validate
 		if ( ! $this->validate_attachment_for_tagging( $post_id ) ) {
 			return $post_id;
