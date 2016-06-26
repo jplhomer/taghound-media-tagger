@@ -53,8 +53,27 @@ class Usage {
 	public function __construct( Array $response ) {
 		$this->response = $response;
 
-		$this->hourly = $response['results']['user_throttles'][0];
-		$this->monthly = $response['results']['user_throttles'][1];
+		$this->hourly = $this->get_throttle_set('hourly');
+		$this->monthly = $this->get_throttle_set('monthly');
+	}
+
+	/**
+	 * Get a throttle set from the API result
+	 * @param String $name Throttle set name monthly|hourly
+	 * @return Array 	   Throttle set or empty array
+	 */
+	protected function get_throttle_set( String $name ) {
+		$throttle_set = array();
+
+		$filtered = array_filter( $this->response['results']['user_throttles'], function($a) use ($name) {
+			return $a['name'] === $name;
+		});
+
+		if ( count($filtered) === 1 ) {
+			$throttle_set = array_shift($filtered);
+		}
+
+		return $throttle_set;
 	}
 
 	/**

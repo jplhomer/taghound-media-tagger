@@ -11,19 +11,19 @@ class UsageTest extends WP_UnitTestCase {
 		'results' => array(
 			'user_throttles' => array(
 				array(
-					'name' => 'hourly',
-					'consumed' => 0,
-					'consumed_percentage' => 0,
-					'limit' => 1000,
-					'units' => 'per hour',
-					'wait' => 42,
-				),
-				array(
 					'name' => 'monthly',
 					'consumed' => 0,
 					'consumed_percentage' => 0,
 					'limit' => 5000,
 					'units' => 'per month',
+					'wait' => 42,
+				),
+				array(
+					'name' => 'hourly',
+					'consumed' => 0,
+					'consumed_percentage' => 0,
+					'limit' => 1000,
+					'units' => 'per hour',
 					'wait' => 42,
 				),
 			)
@@ -93,5 +93,15 @@ class UsageTest extends WP_UnitTestCase {
 
 		$hourly_usage = new Usage( $this->hourly_throttle );
 		$this->assertTrue( $hourly_usage->is_throttled(), 'Hourly throttle' );
+	}
+
+	function test_usage_assigned_properly() {
+		$usage = new Usage( $this->no_throttle );
+		$this->assertEquals( 'monthly', $usage->monthly['name'] );
+		$this->assertEquals( 'hourly', $usage->hourly['name'] );
+
+		$other_usage = new Usage( $this->no_throttle );
+		$this->assertEquals( 'monthly', $other_usage->monthly['name'] );
+		$this->assertEquals( 'hourly', $other_usage->hourly['name'] );
 	}
 }

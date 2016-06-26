@@ -154,11 +154,11 @@ class Settings {
 			return;
 		}
 
-		$monthly = $usage->monthly;
 		$hourly = $usage->hourly;
+		$monthly = $usage->monthly;
 
-		echo "<p>You have used <strong>{$monthly['consumed']}/{$monthly['limit']}</strong> units this month.";
 		echo "<p>You have used <strong>{$hourly['consumed']}/{$hourly['limit']}</strong> units this hour.";
+		echo "<p>You have used <strong>{$monthly['consumed']}/{$monthly['limit']}</strong> units this month.";
 	}
 
 	/**
