@@ -13,6 +13,8 @@
 
 namespace Taghound_Media_Tagger;
 
+use Taghound_Media_Tagger\Clarifai\API\Client;
+
 class Taghound_Media_Tagger {
 	protected static $_instance = null;
 
@@ -27,12 +29,13 @@ class Taghound_Media_Tagger {
 
 	public function __construct() {
 		define('TMT_SETTING_PREFIX', 'tmt_');
-		define('TMT_TOKEN_SETTING', 'tmt_clarifai_token');
-		define('TMT_POST_META_KEY', 'tmt_clarifai_data');
+		define('TMT_TOKEN_SETTING', TMT_SETTING_PREFIX . 'clarifai_token');
+		define('TMT_POST_META_KEY', TMT_SETTING_PREFIX . 'clarifai_data');
 		define('TMT_TAG_SLUG', 'tmt_tag');
 
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
+		include 'lib/class-clarifai-api-usage.php';
 		include 'taxonomies/tmt_tag.php';
 
 		if ( is_admin() ) {
@@ -111,11 +114,24 @@ class Taghound_Media_Tagger {
 	}
 
 	/**
+	 * Gets the Clarifai API client for usage
+	 * @return Client 	Clarifai API Client
+	 */
+	public function get_cf_client() {
+		$cf = new Client( array(
+			'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
+			'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
+		));
+
+		return $cf;
+	}
+
+	/**
 	 * Handle the wordpress add_attachment filter
 	 * @param int $post_id  WP Post ID for attachment
 	 * @param object $cf    (optional) Pass in the API class. Used only for testing.
 	 */
-	public function handle_add_attachment( $post_id, $cf = null ) {
+	public function handle_add_attachment( $post_id, Client $cf = null ) {
 		// Validate
 		if ( ! $this->validate_attachment_for_tagging( $post_id ) ) {
 			return $post_id;
@@ -124,10 +140,7 @@ class Taghound_Media_Tagger {
 		$image_path = get_attached_file( $post_id );
 
 		if ( is_null( $cf ) ) {
-			$cf = new Clarifai_API( array(
-				'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
-				'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
-			));
+			$cf = $this->get_cf_client();
 		}
 
 		$tags = $cf->get_tags_for_image( $image_path );

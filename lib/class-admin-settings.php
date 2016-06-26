@@ -55,6 +55,11 @@ class Settings {
 					),
 				),
 			),
+			'actions' => array(
+				'name' => 'actions',
+				'title' => '',
+				'fields' => array(),
+			),
 		);
 
 		add_action( 'admin_init', array( $this, 'init_settings_sections' ) );
@@ -98,24 +103,6 @@ class Settings {
 	}
 
 	/**
-	 * Get content for the page
-	 * @return void
-	 */
-	public function get_options_page() {
-		?>
-		<div class="wrap">
-			<h2>Taghound Media Tagger Settings</h2>
-			<form method="post" action="options.php">
-				<?php settings_fields( $this->page ); ?>
-				<?php do_settings_sections( $this->page ); ?>
-
-				<?php submit_button(); ?>
-			</form>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Prints a checkbox input
 	 * @param  array $setting  Settings
 	 * @return void
@@ -154,12 +141,38 @@ class Settings {
 		echo '<input name="' . $this->prefix . $setting['name'] . '" id="' . $this->prefix . $setting['name'] . '" value="' . $value . '" />';
 	}
 
+	public function print_usage_data() {
+		$taghound = Taghound_Media_Tagger::instance();
+		$cf = $taghound->get_cf_client();
+
+		$usage = $cf->get_usage_data();
+
+		echo "<h3>Taghound - Clarifai API Usage</h3>";
+
+		if ( ! is_a( $usage, 'Taghound_Media_Tagger\Clarifai\API\Usage' ) ) {
+			echo "We had trouble loading your Clarifai API usage. Please try again later.";
+			return;
+		}
+
+		$monthly = $usage->monthly;
+		$hourly = $usage->hourly;
+
+		echo "<p>You have used <strong>{$monthly['consumed']}/{$monthly['limit']}</strong> units this month.";
+		echo "<p>You have used <strong>{$hourly['consumed']}/{$hourly['limit']}</strong> units this hour.";
+	}
+
 	/**
 	 * Print instructions for getting an API key from Clarifai.
 	 * @return void
 	 */
 	public function section_content_main() {
 		echo '<p>Enter your Clarifai Client ID and Client Secret. Get them by <a href="http://developer.clarifai.com" target="_blank">creating a free Clarifai account here &raquo;</a>';
+	}
+
+	public function section_content_actions() {
+		if ( tmt_is_enabled() ) {
+			$this->print_usage_data();
+		}
 	}
 }
 
