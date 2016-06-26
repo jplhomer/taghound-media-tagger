@@ -13,6 +13,8 @@
 
 namespace Taghound_Media_Tagger;
 
+use Taghound_Media_Tagger\Clarifai\API\Client;
+
 class Taghound_Media_Tagger {
 	protected static $_instance = null;
 

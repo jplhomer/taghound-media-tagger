@@ -32,7 +32,7 @@ class TagTest extends WP_UnitTestCase {
 		$this->attachment_image = get_post( $post_id );
 
 		// Create a mock of the API
-		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai_API' )
+		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
 						  ->setConstructorArgs( array( array( 'client_id' => 'nota', 'client_secret' => 'secret' ) ) )
 						  ->setMethods( array('get_tags_for_image') )
 						  ->getMock();
