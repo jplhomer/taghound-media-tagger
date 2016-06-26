@@ -27,8 +27,8 @@ class Taghound_Media_Tagger {
 
 	public function __construct() {
 		define('TMT_SETTING_PREFIX', 'tmt_');
-		define('TMT_TOKEN_SETTING', 'tmt_clarifai_token');
-		define('TMT_POST_META_KEY', 'tmt_clarifai_data');
+		define('TMT_TOKEN_SETTING', TMT_SETTING_PREFIX . 'clarifai_token');
+		define('TMT_POST_META_KEY', TMT_SETTING_PREFIX . 'clarifai_data');
 		define('TMT_TAG_SLUG', 'tmt_tag');
 
 		include 'taghound-media-tagger-functions.php';
