@@ -124,10 +124,29 @@ class Clarifai_API {
 	}
 
 	/**
+	 * Get usage data for a user's account
+	 * @return array Array of objects: Hourly and Monthly throttles
+	 */
+	public function get_usage_data() {
+		$args = array(
+			'endpoint' => 'usage',
+		);
+
+		try {
+			$results = $this->_make_request( $args );
+
+			return $results['results']['user_throttles'];
+		} catch ( \Exception $e ) {
+			return $e;
+		}
+	}
+
+	/**
 	 * Performs the general API request
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
 		if ( ! $authenticating ) {
+			$is_post = !empty( $args['post'] );
 			$token = $this->get_auth_token();
 			$args = wp_parse_args( $args, array(
 				'headers' => array(
@@ -140,9 +159,12 @@ class Clarifai_API {
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		if ( $is_post ) {
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
+		}		
 
 		if ( ! empty($args['headers']) ) {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $args['headers']);
