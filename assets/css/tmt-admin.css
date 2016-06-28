@@ -13,3 +13,41 @@ tr.compat-field-tmt-tag-editor {
 .upload-php .ac_results {
 	transform: translateY(-2rem);
 }
+
+.tmt-progress {
+	width: 100%;
+	max-width: 800px;
+	height: 2em;
+	margin: 5px 0;
+	color: #458ac8;
+	border: none;
+	overflow: hidden;
+	border-radius: 1em;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.tmt-progress::-webkit-progress-bar {
+    background-color: #eee;
+    border-radius: 1em;
+    min-width: 2em;
+    box-shadow: 0 2px 5px rgba(0,0,0,.25) inset
+}
+
+.tmt-progress::-webkit-progress-value {
+    background-color: #458ac8;
+    border-radius: 1em;
+    min-width: 2em;
+    background-image: -ms-linear-gradient(top,#458ac8,#3270a8);
+    background-image: -o-linear-gradient(top,#458ac8,#3270a8);
+    background-image: -webkit-linear-gradient(top #458ac8 #3270a8);
+    background-image: -moz-linear-gradient(top #458ac8 #3270a8);
+    background-image: linear-gradient(top #458ac8 #3270a8)
+}
+
+.tmt-progress::-moz-progress-bar {
+    background-color: #458ac8;
+    border-radius: 1em;
+    min-width: 2em
+}

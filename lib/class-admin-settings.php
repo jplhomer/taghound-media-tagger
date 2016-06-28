@@ -157,8 +157,13 @@ class Settings {
 		$hourly = $usage->hourly;
 		$monthly = $usage->monthly;
 
-		echo "<p>You have used <strong>{$hourly['consumed']}/{$hourly['limit']}</strong> units this hour.";
-		echo "<p>You have used <strong>{$monthly['consumed']}/{$monthly['limit']}</strong> units this month.";
+		echo "<p><strong>Hourly</strong></p>";
+		echo "<progress class='tmt-progress' value='{$hourly['consumed']}' max='{$hourly['limit']}'></progress>";
+		echo "<p>{$hourly['consumed']} of {$hourly['limit']} units used";
+		echo "<hr>";
+		echo "<p><strong>Monthly</strong></p>";
+		echo "<progress class='tmt-progress' value='{$monthly['consumed']}' max='{$monthly['limit']}'></progress>";
+		echo "<p>{$monthly['consumed']} of {$monthly['limit']} units used";
 	}
 
 	/**
