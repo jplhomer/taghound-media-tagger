@@ -186,7 +186,7 @@ class Settings {
 	}
 
 	public function section_content_actions() {
-		if ( tmt_is_enabled() ) {
+		if ( tmt_can_be_enabled() ) {
 			$this->print_usage_data();
 		}
 	}
