@@ -49,6 +49,9 @@ https://github.com/jplhomer/taghound-media-tagger
 ### Website ###
 http://jplhomer.org/projects/taghound-media-tagger/
 
+### Art ###
+Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on the TagHound logo and banner!
+
 ## Installation ##
 
 1. Upload 'taghound-media-tagger' to the '/wp-content/plugins/' directory
