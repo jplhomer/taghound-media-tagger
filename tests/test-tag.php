@@ -66,4 +66,17 @@ class TagTest extends WP_UnitTestCase {
 
 		$this->assertEquals( $this->tag_data['tags'], $term_names );
 	}
+
+	/**
+	 * Make sure our upload only utility function works
+	 */
+	function test_upload_only_function_works() {
+		$option_name = TMT_SETTING_PREFIX . 'upload_only';
+
+		update_option( $option_name, '' );
+		$this->assertFalse( tmt_is_upload_only() );
+
+		update_option( $option_name, 'on' );
+		$this->assertTrue( tmt_is_upload_only() );
+	}
 }

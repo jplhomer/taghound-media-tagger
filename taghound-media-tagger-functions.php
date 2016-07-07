@@ -30,3 +30,11 @@ function tmt_is_enabled() {
 
 	return $is_enabled;
 }
+
+/**
+ * Is the user's site behind a firewall or on a dev environment?
+ * @return boolean
+ */
+function tmt_is_upload_only() {
+	return !!get_option(TMT_SETTING_PREFIX . 'upload_only');
+}
