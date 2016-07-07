@@ -53,6 +53,13 @@ class Settings {
 						'type'    => 'checkbox',
 						'disabled' => !tmt_can_be_enabled(),
 					),
+					array(
+						'name'     => 'upload_only',
+						'title'    => 'My website is not publicly accessible',
+						'help'     => 'If checked, images will be uploaded for analysis instead of downloaded.',
+						'type'     => 'checkbox',
+						'disabled' => !tmt_can_be_enabled(),
+					),
 				),
 			),
 			'actions' => array(
@@ -112,6 +119,10 @@ class Settings {
 		$disabled = $setting['disabled'] ? 'disabled' : '';
 
 		echo '<input type="checkbox" value="' . $this->prefix . $setting['name'] . '" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
+
+		if ( !empty($setting['help']) ) {
+			echo '<small><em>' . $setting['help'] . '</em></small>';
+		}
 	}
 
 	/**
