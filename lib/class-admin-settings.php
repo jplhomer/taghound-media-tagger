@@ -118,7 +118,7 @@ class Settings {
 		$checked = ( get_option( $this->prefix . $setting['name'] ) ) ? 'checked' : '';
 		$disabled = $setting['disabled'] ? 'disabled' : '';
 
-		echo '<input type="checkbox" value="' . $this->prefix . $setting['name'] . '" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
+		echo '<input type="checkbox" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
 
 		if ( !empty($setting['help']) ) {
 			echo '<small><em>' . $setting['help'] . '</em></small>';
