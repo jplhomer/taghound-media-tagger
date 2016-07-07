@@ -2,8 +2,8 @@
 **Contributors:** [jplhomer](https://profiles.wordpress.org/jplhomer)  
 **Tags:** media gallery, tagging, images, deep learning, neural network, admin  
 **Requires at least:** 3.9  
-**Tested up to:** 4.5  
-**Stable tag:** 1.0  
+**Tested up to:** 4.5.3  
+**Stable tag:** 1.0.1  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -49,6 +49,9 @@ https://github.com/jplhomer/taghound-media-tagger
 ### Website ###
 http://jplhomer.org/projects/taghound-media-tagger/
 
+### Art ###
+Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on the TagHound logo and banner!
+
 ## Installation ##
 
 1. Upload 'taghound-media-tagger' to the '/wp-content/plugins/' directory
@@ -89,6 +92,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 
 ## Changelog ##
+
+### 1.0.1 ###
+* FEATURE: See Clarifai API usage data under Media settings.
 
 ### 1.0.0 ###
 * Taghound Media Tagger.

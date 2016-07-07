@@ -1,7 +1,7 @@
 <?php
-namespace Taghound_Media_Tagger;
+namespace Taghound_Media_Tagger\Clarifai\API;
 
-class Clarifai_API {
+class Client {
 	/**
 	 * Current API version
 	 * @var string
@@ -62,7 +62,7 @@ class Clarifai_API {
 	protected function get_auth_token() {
 		$token = get_option(TMT_TOKEN_SETTING);
 
-		if ( !$token || $this->is_token_expired($token) ) {
+		if ( !$token || empty($token['access_token']) || $this->is_token_expired($token) ) {
 			return $this->renew_auth_token();
 		}
 
@@ -124,9 +124,29 @@ class Clarifai_API {
 	}
 
 	/**
+	 * Get usage data for a user's account
+	 * @return Usage object or Exception
+	 */
+	public function get_usage_data() {
+		$args = array(
+			'endpoint' => 'usage',
+		);
+
+		try {
+			$results = $this->_make_request( $args );
+
+			return new Usage( $results );
+		} catch ( \Exception $e ) {
+			return $e;
+		}
+	}
+
+	/**
 	 * Performs the general API request
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
+		$is_post = !empty( $args['post'] );
+
 		if ( ! $authenticating ) {
 			$token = $this->get_auth_token();
 			$args = wp_parse_args( $args, array(
@@ -140,9 +160,12 @@ class Clarifai_API {
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+		if ( $is_post ) {
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
+		}
 
 		if ( ! empty($args['headers']) ) {
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $args['headers']);
