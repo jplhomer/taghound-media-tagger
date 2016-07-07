@@ -3,7 +3,7 @@ Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Tested up to: 4.5
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,6 +81,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 4. Filter media items by a specific tag when using the list view of the media library
 
 == Changelog ==
+
+= 1.0.1 =
+* FEATURE: See Clarifai API usage data under Media settings.
 
 = 1.0.0 =
 * Taghound Media Tagger.
