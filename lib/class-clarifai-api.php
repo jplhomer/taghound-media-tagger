@@ -97,16 +97,23 @@ class Client {
 
 	/**
 	 * Get tags for an image
-	 * @param  string $image_path File path to image
+	 * @param  string $image_path_or_url File path or URL to image
 	 * @return array              Array ( tags => array, doc_id => int )
 	 */
-	public function get_tags_for_image( $image_path ) {
+	public function get_tags_for_image( $image_path_or_url ) {
 		$args = array(
 			'endpoint' => 'tag',
-			'post' => array(
-				'encoded_data' => new \CURLFile( $image_path ),
-			),
 		);
+
+		if ( tmt_is_upload_only() ) {
+			$args['post'] = array(
+				'encoded_data' => new \CURLFile( $image_path_or_url ),
+			);
+		} else {
+			$args['post'] = array(
+				'url' => $image_path_or_url,
+			);
+		}
 
 		try {
 			$results = $this->_make_request( $args );
