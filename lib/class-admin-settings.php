@@ -9,7 +9,7 @@ class Settings {
 	 * The page where our options are being printed
 	 * @var string
 	 */
-	protected $page = 'media';
+	protected $page = 'taghound-settings';
 
 	/**
 	 * The prefix to use when creating setting names
@@ -69,7 +69,7 @@ class Settings {
 			),
 		);
 
-		add_action( 'admin_init', array( $this, 'init_settings_sections' ) );
+		add_action( 'admin_menu', array( $this, 'init_settings_sections' ) );
 	}
 
 	/**
@@ -77,6 +77,14 @@ class Settings {
 	 * @return void
 	 */
 	public function init_settings_sections() {
+		add_options_page(
+			"Taghound Media Tagger",
+			"Taghound",
+			'manage_options',
+			$this->page,
+			array( $this, 'print_options_page' )
+		);
+
 		foreach ($this->settings as $key => $section) {
             if( method_exists( 'Taghound_Media_Tagger\Settings', "section_content_$key" ) ) {
                 $section_callback = array( $this, "section_content_$key" );
@@ -150,6 +158,18 @@ class Settings {
 		$value = esc_attr( get_option( $this->prefix . $setting['name'], '' ) );
 
 		echo '<input name="' . $this->prefix . $setting['name'] . '" id="' . $this->prefix . $setting['name'] . '" value="' . $value . '" />';
+	}
+
+	/**
+	 * Prints the Options page content
+	 * @return void
+	 */
+	public function print_options_page() {
+		echo '<form method="POST" action="options.php"><div class="wrap">';
+		settings_fields( $this->page );
+		do_settings_sections( $this->page );
+		submit_button();
+		echo '</div></form>';
 	}
 
 	public function print_usage_data() {

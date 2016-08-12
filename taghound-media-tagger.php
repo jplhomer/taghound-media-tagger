@@ -47,7 +47,7 @@ class Taghound_Media_Tagger {
 		}
 
 		add_action( 'admin_enqueue_scripts', function( $hook ) {
-			$pages = array('post.php', 'upload.php', 'options-media.php');
+			$pages = array('post.php', 'upload.php', 'settings_page_taghound-settings');
 
 			if ( ! in_array( $hook, $pages ) ) {
 				return;
