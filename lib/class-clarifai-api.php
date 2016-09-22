@@ -96,6 +96,24 @@ class Client {
 	}
 
 	/**
+	 * Get info about max batch size, etc from the info endpoint
+	 * @return array  Info set from Clarifai
+	 */
+	public function get_info() {
+		$args = array(
+			'endpoint' => 'info',
+		);
+
+		try {
+			$results = $this->_make_request( $args );
+
+			return $results['results'];
+		} catch ( \Exception $e ) {
+			return $e;
+		}
+	}
+
+	/**
 	 * Get tags for an image
 	 * @param  string $image_path_or_url File path or URL to image
 	 * @return array              Array ( tags => array, doc_id => int )
@@ -125,6 +143,33 @@ class Client {
 				'tags' => $tags,
 				'doc_id' => $doc_id,
 			);
+		} catch ( \Exception $e ) {
+			return $e;
+		}
+	}
+
+	/**
+	 * Get tags for multiple images
+	 * @param  Array $image_urls  Array of image URLs
+	 * @return Array 			  Tag responses
+	 */
+	public function get_tags_for_images( $image_urls ) {
+		$args = array(
+			'endpoint' => 'tag'
+		);
+
+		$image_url_string = '';
+		foreach ($image_urls as $url) {
+			$image_url_string .= 'url=' . $url . '&';
+		}
+
+		$args['post'] = $image_url_string;
+
+		try {
+			$results = $this->_make_request( $args );
+
+			// TODO: Handle response
+			return $results;
 		} catch ( \Exception $e ) {
 			return $e;
 		}

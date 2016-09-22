@@ -9,7 +9,6 @@ jQuery(function($) {
 				action: 'tmt_bulk_tag'
 			},
 			function(response) {
-				console.log(response);
 				if ( response.success ) {
 					console.log(response.data);
 				} else {

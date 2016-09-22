@@ -2,6 +2,9 @@
 
 namespace Taghound_Media_Tagger;
 
+use \Taghound_Media_Tagger\Tagger_Service;
+use \Taghound_Media_Tagger\Bulk_Tagger_Service;
+
 class Settings {
 	protected static $_instance;
 
@@ -173,8 +176,7 @@ class Settings {
 	}
 
 	public function print_usage_data() {
-		$taghound = Taghound_Media_Tagger::instance();
-		$cf = $taghound->get_cf_client();
+		$cf = Tagger_Service::get_cf_client();
 
 		$usage = $cf->get_usage_data();
 

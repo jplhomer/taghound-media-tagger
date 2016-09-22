@@ -14,6 +14,7 @@
 namespace Taghound_Media_Tagger;
 
 use Taghound_Media_Tagger\Clarifai\API\Client;
+use Taghound_Media_Tagger\Tagger_Service;
 
 class Taghound_Media_Tagger {
 	protected static $_instance = null;
@@ -36,6 +37,7 @@ class Taghound_Media_Tagger {
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
 		include 'lib/class-clarifai-api-usage.php';
+		include 'lib/class-tagger-service.php';
 		include 'lib/class-bulk-tagger-service.php';
 		include 'taxonomies/tmt_tag.php';
 
@@ -116,19 +118,6 @@ class Taghound_Media_Tagger {
 	}
 
 	/**
-	 * Gets the Clarifai API client for usage
-	 * @return Client 	Clarifai API Client
-	 */
-	public function get_cf_client() {
-		$cf = new Client( array(
-			'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
-			'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
-		));
-
-		return $cf;
-	}
-
-	/**
 	 * Handle the wordpress add_attachment filter
 	 * @param int $post_id  WP Post ID for attachment
 	 * @param object $cf    (optional) Pass in the API class. Used only for testing.
@@ -147,7 +136,7 @@ class Taghound_Media_Tagger {
 		}
 
 		if ( is_null( $cf ) ) {
-			$cf = $this->get_cf_client();
+			$cf = Tagger_Service::get_cf_client();
 		}
 
 		$tags = $cf->get_tags_for_image( $image_path_or_url );

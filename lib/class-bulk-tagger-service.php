@@ -2,7 +2,8 @@
 
 namespace Taghound_Media_Tagger;
 
-use \Taghound_Media_Tagger\Client;
+use \Taghound_Media_Tagger\Clarifai\API\Client;
+use \Taghound_Media_Tagger\Tagger_Service;
 
 class Bulk_Tagger_Service {
 	protected static $_instance = null;
@@ -28,10 +29,29 @@ class Bulk_Tagger_Service {
 		$this->api = $api;
 	}
 
-	public static function init() {
+	/**
+	 * Start a new bulk tagging session
+	 * @return array    Results
+	 */
+	public function init() {
 		// See what our max batch size is
+		if ( is_null($this->api) ) {
+			$this->set_api( Tagger_Service::get_cf_client() );
+		}
+
+		$info = $this->api->get_info();
+		$max_batch_size = $info['max_batch_size'];
+
 		// Get that many images from repository
+		$images = self::untagged_images( array('posts_per_page' => $max_batch_size) );
+		$image_urls = array_map(function($image) {
+			return $image->guid;
+		}, $images);
+
+		$results = $this->api->get_tags_for_images( $image_urls );
+
 		// Request tags
+		return $results;
 		// Process tags
 		// Send back paginated response
 	}
@@ -45,11 +65,12 @@ class Bulk_Tagger_Service {
 	}
 
 	/**
-	 * Get the number of untagged images in the library
-	 * @return int
+	 * Get all untagged images
+	 * @param  array  $args Optional arguments
+	 * @return array        WP Attachment objects
 	 */
-	public static function untagged_images_count() {
-		$args = array(
+	public static function untagged_images( $args = array() ) {
+		$args = wp_parse_args($args, array(
 			'post_type' => 'attachment',
 			'meta_query' => array(
 				array(
@@ -58,11 +79,19 @@ class Bulk_Tagger_Service {
 					'compare' => 'NOT EXISTS',
 				),
 			),
-		);
+		));
 
 		$untagged_images = get_posts( $args );
 
-		return count( $untagged_images );
+		return $untagged_images;
+	}
+
+	/**
+	 * Get the number of untagged images in the library
+	 * @return int
+	 */
+	public static function untagged_images_count() {
+		return count( self::untagged_images() );
 	}
 }
 
