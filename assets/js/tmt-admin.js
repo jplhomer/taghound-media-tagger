@@ -2,6 +2,23 @@
 'use strict';
 
 jQuery(function($) {
+	var makeBulkTaggingRequest = function() {
+		$.post(
+			ajaxurl,
+			{
+				action: 'tmt_bulk_tag'
+			},
+			function(response) {
+				console.log(response);
+				if ( response.success ) {
+					console.log(response.data);
+				} else {
+					console.log(response);
+				}
+			}
+		);
+	};
+
 	/**
 	 * Overrides WP's Attachment view functions to instantiate our own scripts
 	 * and serialize the form in a custom way.
@@ -34,10 +51,27 @@ jQuery(function($) {
 		});
 	};
 
+	/**
+	 * Kick off bulk tagging
+	 */
+	var setUpBulkTagging = function() {
+		var bulkTagSelector = '[data-bulk-tag-init]';
+
+		if ( ! $(bulkTagSelector).length ) {
+			return false;
+		}
+
+		$(bulkTagSelector).on('click', function(e) {
+			e.preventDefault();
+			makeBulkTaggingRequest();
+		});
+	};
+
 	var init = function() {
 		if ( typeof wp.media !== 'undefined' ) {
 			setUpAttachmentOverrides();
 		}
+		setUpBulkTagging();
 	}
 
 	init();

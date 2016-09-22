@@ -2,14 +2,38 @@
 
 namespace Taghound_Media_Tagger;
 
+use \Taghound_Media_Tagger\Client;
+
 class Bulk_Tagger_Service {
 	protected static $_instance = null;
+
+	/**
+	 * The Clarifai API
+	 * @var Client
+	 */
+	protected $api = null;
 
 	public static function instance() {
 		if ( is_null(self::$_instance) ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+	/**
+	 * Injects the Clarifai API service
+	 * @param Client $api
+	 */
+	public function set_api(Client $api) {
+		$this->api = $api;
+	}
+
+	public static function init() {
+		// See what our max batch size is
+		// Get that many images from repository
+		// Request tags
+		// Process tags
+		// Send back paginated response
 	}
 
 	/**

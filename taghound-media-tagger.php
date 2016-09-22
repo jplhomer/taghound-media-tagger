@@ -41,6 +41,7 @@ class Taghound_Media_Tagger {
 
 		if ( is_admin() ) {
 			include_once 'lib/class-admin-settings.php';
+			include_once 'lib/class-admin-ajax.php';
 			include_once ABSPATH . '/wp-admin/includes/meta-boxes.php';
 			add_filter( 'attachment_fields_to_edit', array( $this, 'edit_attachment' ), 10, 2 );
 			add_filter( 'ajax_query_attachments_args', array( $this, 'handle_attachment_search' ), 10, 1 );
