@@ -48,7 +48,7 @@ class Taghound_Media_Tagger {
 		}
 
 		add_action( 'admin_enqueue_scripts', function( $hook ) {
-			$pages = array('post.php', 'upload.php', 'options-media.php');
+			$pages = array('post.php', 'upload.php', 'settings_page_taghound-settings');
 
 			if ( ! in_array( $hook, $pages ) ) {
 				return;
@@ -138,13 +138,18 @@ class Taghound_Media_Tagger {
 			return $post_id;
 		}
 
-		$image_path = get_attached_file( $post_id );
+		if ( tmt_is_upload_only() ) {
+			$image_path_or_url = get_attached_file( $post_id );
+		} else {
+			$attachment = wp_get_attachment_image_src( $post_id, 'large' );
+			$image_path_or_url = $attachment[0];
+		}
 
 		if ( is_null( $cf ) ) {
 			$cf = $this->get_cf_client();
 		}
 
-		$tags = $cf->get_tags_for_image( $image_path );
+		$tags = $cf->get_tags_for_image( $image_path_or_url );
 
 		if ( !$tags ) {
 			return $post_id;

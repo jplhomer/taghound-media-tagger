@@ -58,7 +58,7 @@ Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit the [Clarifai Developer Portal](https://developer.clarifai.com/) and create a free or paid account
 1. Create an application with Clarifai, and copy the **Client ID** and **Client Secret** from the developer portal
-1. Visit your WordPress Media Settings page under Settings > Media
+1. Visit the Taghound settings page under Settings
 1. Paste in the **Client ID** and **Client Secret** from step 4 and click "Save Changes"
 1. On the same page, click the checkbox "Enable for all new Images" to have Taghound Media Tagger begin tagging new images!
 

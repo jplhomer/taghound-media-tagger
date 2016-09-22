@@ -9,7 +9,7 @@ class Settings {
 	 * The page where our options are being printed
 	 * @var string
 	 */
-	protected $page = 'media';
+	protected $page = 'taghound-settings';
 
 	/**
 	 * The prefix to use when creating setting names
@@ -53,6 +53,13 @@ class Settings {
 						'type'    => 'checkbox',
 						'disabled' => !tmt_can_be_enabled(),
 					),
+					array(
+						'name'     => 'upload_only',
+						'title'    => 'My website is not publicly accessible',
+						'help'     => 'If checked, images will be uploaded for analysis instead of downloaded.',
+						'type'     => 'checkbox',
+						'disabled' => !tmt_can_be_enabled(),
+					),
 				),
 			),
 			'actions' => array(
@@ -62,7 +69,7 @@ class Settings {
 			),
 		);
 
-		add_action( 'admin_init', array( $this, 'init_settings_sections' ) );
+		add_action( 'admin_menu', array( $this, 'init_settings_sections' ) );
 	}
 
 	/**
@@ -70,6 +77,14 @@ class Settings {
 	 * @return void
 	 */
 	public function init_settings_sections() {
+		add_options_page(
+			"Taghound Media Tagger",
+			"Taghound",
+			'manage_options',
+			$this->page,
+			array( $this, 'print_options_page' )
+		);
+
 		foreach ($this->settings as $key => $section) {
             if( method_exists( 'Taghound_Media_Tagger\Settings', "section_content_$key" ) ) {
                 $section_callback = array( $this, "section_content_$key" );
@@ -111,7 +126,11 @@ class Settings {
 		$checked = ( get_option( $this->prefix . $setting['name'] ) ) ? 'checked' : '';
 		$disabled = $setting['disabled'] ? 'disabled' : '';
 
-		echo '<input type="checkbox" value="' . $this->prefix . $setting['name'] . '" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
+		echo '<input type="checkbox" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
+
+		if ( !empty($setting['help']) ) {
+			echo '<small><em>' . $setting['help'] . '</em></small>';
+		}
 	}
 
 	/**
@@ -139,6 +158,18 @@ class Settings {
 		$value = esc_attr( get_option( $this->prefix . $setting['name'], '' ) );
 
 		echo '<input name="' . $this->prefix . $setting['name'] . '" id="' . $this->prefix . $setting['name'] . '" value="' . $value . '" />';
+	}
+
+	/**
+	 * Prints the Options page content
+	 * @return void
+	 */
+	public function print_options_page() {
+		echo '<form method="POST" action="options.php"><div class="wrap">';
+		settings_fields( $this->page );
+		do_settings_sections( $this->page );
+		submit_button();
+		echo '</div></form>';
 	}
 
 	public function print_usage_data() {
@@ -175,7 +206,7 @@ class Settings {
 	}
 
 	public function section_content_actions() {
-		if ( tmt_is_enabled() ) {
+		if ( tmt_can_be_enabled() ) {
 			$this->print_usage_data();
 		}
 	}
