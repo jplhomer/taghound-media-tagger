@@ -198,9 +198,15 @@ class Settings {
 	}
 
 	public function print_bulk_tagger() {
+		$untagged_images_count = Bulk_Tagger_Service::untagged_images_count();
+
 		echo "<h3>Taghound Bulk Tagging</h3>";
 
-		echo "<p>You have <strong>N</strong> untagged images.";
+		if ( $untagged_images_count > 0 ) {
+			echo "<p>You have <strong>${untagged_images_count}</strong> untagged images.";
+		} else {
+			echo "<p>All of your images have tags!</p>";
+		}
 	}
 
 	/**

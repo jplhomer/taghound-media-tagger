@@ -81,4 +81,18 @@ class AttachmentTest extends WP_UnitTestCase {
 
 		$this->assertEquals( $this->tag_data, get_post_meta( $this->attachment_image->ID, TMT_POST_META_KEY, true ) );
 	}
+
+	function tearDown() {
+		// Delete the attachments
+		$args = array(
+			'post_type' => 'attachment',
+			'posts_per_page' => -1,
+		);
+
+		$attachments = get_posts( $args );
+
+		foreach ($attachments as $attachment) {
+			wp_delete_post( $attachment->ID );
+		}
+	}
 }

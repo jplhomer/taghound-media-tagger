@@ -11,6 +11,23 @@ class Bulk_Tagger_Service {
 		}
 		return self::$_instance;
 	}
+
+	public static function untagged_images_count() {
+		$args = array(
+			'post_type' => 'attachment',
+			'meta_query' => array(
+				array(
+					'key' => TMT_POST_META_KEY,
+					'value' => '',
+					'compare' => 'NOT EXISTS',
+				),
+			),
+		);
+
+		$untagged_images = get_posts( $args );
+
+		return count( $untagged_images );
+	}
 }
 
 Bulk_Tagger_Service::instance();
