@@ -36,7 +36,7 @@ class Taghound_Media_Tagger {
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
 		include 'lib/class-clarifai-api-usage.php';
-		include 'lib/class-batch-tagger.php';
+		include 'lib/class-bulk-tagger.php';
 		include 'taxonomies/tmt_tag.php';
 
 		if ( is_admin() ) {

@@ -197,6 +197,12 @@ class Settings {
 		echo "<p>{$monthly['consumed']} of {$monthly['limit']} units used";
 	}
 
+	public function print_bulk_tagger() {
+		echo "<h3>Taghound Bulk Tagging</h3>";
+
+		echo "<p>You have <strong>N</strong> untagged images.";
+	}
+
 	/**
 	 * Print instructions for getting an API key from Clarifai.
 	 * @return void
@@ -208,6 +214,7 @@ class Settings {
 	public function section_content_actions() {
 		if ( tmt_can_be_enabled() ) {
 			$this->print_usage_data();
+			$this->print_bulk_tagger();
 		}
 	}
 }
