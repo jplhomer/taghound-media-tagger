@@ -12,6 +12,18 @@ class Bulk_Tagger_Service {
 		return self::$_instance;
 	}
 
+	/**
+	 * Can bulk tagging happen?
+	 * @return boolean
+	 */
+	public static function enabled() {
+		return tmt_is_enabled() && !tmt_is_upload_only();
+	}
+
+	/**
+	 * Get the number of untagged images in the library
+	 * @return int
+	 */
 	public static function untagged_images_count() {
 		$args = array(
 			'post_type' => 'attachment',

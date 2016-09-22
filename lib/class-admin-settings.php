@@ -199,11 +199,20 @@ class Settings {
 
 	public function print_bulk_tagger() {
 		$untagged_images_count = Bulk_Tagger_Service::untagged_images_count();
+		$disabled = !Bulk_Tagger_Service::enabled();
+		$disabled_attr = $disabled ? 'disabled' : '';
 
 		echo "<h3>Taghound Bulk Tagging</h3>";
 
 		if ( $untagged_images_count > 0 ) {
 			echo "<p>You have <strong>${untagged_images_count}</strong> untagged images.";
+			echo "<p><button class='button' data-bulk-tag-init ${disabled_attr}>Tag Them Now</button>";
+
+			if ( $disabled ) {
+				echo " <em>Bulk tagging is not available for websites that are not publicly accessible.</em>";
+			}
+
+			echo "</p>";
 		} else {
 			echo "<p>All of your images have tags!</p>";
 		}
