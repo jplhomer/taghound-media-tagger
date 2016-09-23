@@ -24,7 +24,7 @@ class Bulk_Tagger_Service {
 	public function init() {
 		$result = array(
 			'error' => false,
-			'continue' => false;
+			'continue' => false,
 		);
 
 		// See what our max batch size is
