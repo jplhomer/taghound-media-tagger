@@ -91,7 +91,7 @@ class Bulk_Tagger_Service {
 			'meta_query' => array(
 				array(
 					'key' => TMT_POST_META_KEY,
-					'value' => '',
+					'value' => 'bug #23268',
 					'compare' => 'NOT EXISTS',
 				),
 			),
