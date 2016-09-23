@@ -1,5 +1,7 @@
 <?php
 
+use Taghound_Media_Tagger\Clarifai\Api\Client;
+
 /**
  * Can the tool be enabled?
  * @return bool
@@ -37,4 +39,15 @@ function tmt_is_enabled() {
  */
 function tmt_is_upload_only() {
 	return !!get_option(TMT_SETTING_PREFIX . 'upload_only');
+}
+
+/**
+ * Gets an API client
+ * @return Client  Clarifai API client
+ */
+function tmt_get_cf_client() {
+	return new Client( array(
+		'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
+		'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
+	));
 }

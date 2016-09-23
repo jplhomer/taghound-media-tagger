@@ -10,10 +10,7 @@ class Tagger_Service {
 	 * @return Client
 	 */
 	public static function get_cf_client() {
-		return new Client( array(
-			'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
-			'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
-		));
+		
 	}
 }
 

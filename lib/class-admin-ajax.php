@@ -2,6 +2,7 @@
 
 namespace Taghound_Media_Tagger\Admin;
 
+use \Taghound_Media_Tagger\Tagger_Service;
 use \Taghound_Media_Tagger\Bulk_Tagger_Service;
 
 class Ajax {
@@ -16,8 +17,8 @@ class Ajax {
 
 	public function __construct() {
 		add_action( 'wp_ajax_tmt_bulk_tag', function() {
-			$bulk_tagger = Bulk_Tagger_Service::instance();
 			$response = array();
+			$bulk_tagger = new Bulk_Tagger_Service( tmt_get_cf_client() );
 			$response['message'] = $bulk_tagger->init();
 
 			wp_send_json_success( $response );

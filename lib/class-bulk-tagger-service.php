@@ -6,7 +6,6 @@ use \Taghound_Media_Tagger\Clarifai\API\Client;
 use \Taghound_Media_Tagger\Tagger_Service;
 
 class Bulk_Tagger_Service {
-	protected static $_instance = null;
 
 	/**
 	 * The Clarifai API
@@ -14,18 +13,7 @@ class Bulk_Tagger_Service {
 	 */
 	protected $api = null;
 
-	public static function instance() {
-		if ( is_null(self::$_instance) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-	/**
-	 * Injects the Clarifai API service
-	 * @param Client $api
-	 */
-	public function set_api(Client $api) {
+	public function __construct(Client $api) {
 		$this->api = $api;
 	}
 
@@ -35,15 +23,11 @@ class Bulk_Tagger_Service {
 	 */
 	public function init() {
 		// See what our max batch size is
-		if ( is_null($this->api) ) {
-			$this->set_api( Tagger_Service::get_cf_client() );
-		}
-
 		$info = $this->api->get_info();
 		$max_batch_size = $info['max_batch_size'];
 
 		// Get that many images from repository
-		$images = self::untagged_images( array('posts_per_page' => $max_batch_size) );
+		$images = $this->untagged_images( array('posts_per_page' => $max_batch_size) );
 		$image_urls = array_map(function($image) {
 			return $image->guid;
 		}, $images);
@@ -94,5 +78,3 @@ class Bulk_Tagger_Service {
 		return count( self::untagged_images() );
 	}
 }
-
-Bulk_Tagger_Service::instance();

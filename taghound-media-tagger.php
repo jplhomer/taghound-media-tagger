@@ -14,7 +14,6 @@
 namespace Taghound_Media_Tagger;
 
 use Taghound_Media_Tagger\Clarifai\API\Client;
-use Taghound_Media_Tagger\Tagger_Service;
 
 class Taghound_Media_Tagger {
 	protected static $_instance = null;
@@ -136,7 +135,7 @@ class Taghound_Media_Tagger {
 		}
 
 		if ( is_null( $cf ) ) {
-			$cf = Tagger_Service::get_cf_client();
+			$cf = tmt_get_cf_client();
 		}
 
 		$tags = $cf->get_tags_for_image( $image_path_or_url );
