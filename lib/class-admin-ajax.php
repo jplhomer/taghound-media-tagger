@@ -19,7 +19,9 @@ class Ajax {
 		add_action( 'wp_ajax_tmt_bulk_tag', function() {
 			$response = array();
 			$bulk_tagger = new Bulk_Tagger_Service( tmt_get_cf_client() );
-			$response['message'] = $bulk_tagger->init();
+			$results = $bulk_tagger->init();
+
+			$response['results'] = $results;
 
 			wp_send_json_success( $response );
 		});

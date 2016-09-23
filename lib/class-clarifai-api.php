@@ -159,8 +159,8 @@ class Client {
 		);
 
 		$image_url_string = '';
-		foreach ($image_urls as $url) {
-			$image_url_string .= 'url=' . $url . '&';
+		foreach ($image_urls as $id => $url) {
+			$image_url_string .= 'url=' . $url . '&local_id=' . $id . '&';
 		}
 
 		$args['post'] = $image_url_string;
@@ -168,7 +168,6 @@ class Client {
 		try {
 			$results = $this->_make_request( $args );
 
-			// TODO: Handle response
 			return $results;
 		} catch ( \Exception $e ) {
 			return $e;

@@ -22,22 +22,54 @@ class Bulk_Tagger_Service {
 	 * @return array    Results
 	 */
 	public function init() {
+		$result = array(
+			'error' => false,
+			'continue' => false;
+		);
+
 		// See what our max batch size is
 		$info = $this->api->get_info();
 		$max_batch_size = $info['max_batch_size'];
 
 		// Get that many images from repository
 		$images = $this->untagged_images( array('posts_per_page' => $max_batch_size) );
-		$image_urls = array_map(function($image) {
-			return $image->guid;
-		}, $images);
+		$image_urls = array();
+		foreach ($images as $image) {
+			$image_urls[ $image->ID ] = $image->guid;
+		}
 
 		$results = $this->api->get_tags_for_images( $image_urls );
 
-		// Request tags
-		return $results;
-		// Process tags
-		// Send back paginated response
+		if ( $results['status_code'] === 'OK' ) {
+			$result_messages = $this->process_tag_results( $results );
+
+			$result['message'] = implode($result_messages, "\r\n");
+			$result['continue'] = false; // TODO: Determine if we should continue
+		} else {
+			// Something bad happened.
+			$result['error'] = true;
+			$result['error_message'] = $results['status_msg'];
+			$result['results'] = $results;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Process the tags along with the images
+	 * @param  Array $results  API results
+	 * @return Array 		   Resulting messages
+	 */
+	public function process_tag_results( $results ) {
+		$result_messages = array();
+
+		foreach ( $results['result']['tag'] as $tag ) {
+			// Save the tag info
+			// Create a result message based on what happened
+			// e.g. "Instagram-photo.jpg was assigned 23 tags"
+		}
+
+		return $result_messages;
 	}
 
 	/**
