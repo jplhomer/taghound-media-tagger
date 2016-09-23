@@ -87,6 +87,7 @@ class Bulk_Tagger_Service {
 	 */
 	public static function untagged_images( $args = array() ) {
 		$args = wp_parse_args($args, array(
+			'posts_per_page' => -1,
 			'post_type' => 'attachment',
 			'meta_query' => array(
 				array(

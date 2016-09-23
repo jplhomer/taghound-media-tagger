@@ -18,6 +18,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 			$post_data = array(
 				'post_type' => 'attachment',
 				'post_mime_type' => 'image/jpeg',
+				'post_status' => 'publish',
 			);
 			$post_id = wp_insert_post( $post_data );
 		}
