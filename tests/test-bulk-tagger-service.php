@@ -9,22 +9,28 @@ use \Taghound_Media_Tagger\Bulk_Tagger_Service;
 
 class BulkTaggerServiceTest extends WP_UnitTestCase {
 	function setUp() {
-		// NOTE: Attachment factories with uploads weren't introduced until 4.5
+		parent::setUp();
 
-		// Create a demo image attachment
+		// Create a demo image and PDF attachment
+		// NOTE: Attachment factories with uploads weren't introduced until 4.5
 		if ( is_object( $this->factory ) ) {
-			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) .  '/assets/test-image.jpeg' );
+			$this->factory->attachment->create_upload_object( dirname( __FILE__ ) .  '/assets/test-image.jpeg' );
+			$this->factory->attachment->create_upload_object( dirname( __FILE__ ) . '/assets/test-pdf.pdf' );
 		} else {
 			$post_data = array(
 				'post_type' => 'attachment',
 				'post_mime_type' => 'image/jpeg',
 				'post_status' => 'publish',
 			);
-			$post_id = wp_insert_post( $post_data );
-		}
-		$this->attachment_image = get_post( $post_id );
+			wp_insert_post( $post_data );
 
-		parent::setUp();
+			$post_data = array(
+				'post_type' => 'attachment',
+				'post_mime_type' => 'application/pdf',
+				'post_status' => 'publish',
+			);
+			wp_insert_post( $post_data );
+		}
 	}
 
 	function test_untagged_images_count() {

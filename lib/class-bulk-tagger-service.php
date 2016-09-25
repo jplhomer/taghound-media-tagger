@@ -98,6 +98,9 @@ class Bulk_Tagger_Service {
 			),
 		));
 
+		$valid_images = new Valid_Image_Specification;
+		$args = $valid_images->as_scope( $args );
+
 		$untagged_images = get_posts( $args );
 
 		return $untagged_images;

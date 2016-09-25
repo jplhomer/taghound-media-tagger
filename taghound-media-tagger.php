@@ -18,8 +18,6 @@ use Taghound_Media_Tagger\Clarifai\API\Client;
 class Taghound_Media_Tagger {
 	protected static $_instance = null;
 
-	protected static $valid_attachment_mime_types = array( 'image/jpeg', 'image/png', 'image/gif' );
-
 	public static function instance() {
 		if ( is_null(self::$_instance) ) {
 			self::$_instance = new self();
@@ -36,6 +34,7 @@ class Taghound_Media_Tagger {
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
 		include 'lib/class-clarifai-api-usage.php';
+		include 'lib/class-valid-image-specification.php';
 		include 'lib/class-tagger-service.php';
 		include 'lib/class-bulk-tagger-service.php';
 		include 'taxonomies/tmt_tag.php';
@@ -247,8 +246,9 @@ class Taghound_Media_Tagger {
 	 */
 	public static function validate_attachment_for_tagging( $post_id ) {
 		$attachment = get_post( $post_id );
+		$valid_images = new Valid_Image_Specification;
 
-		return in_array( $attachment->post_mime_type, self::$valid_attachment_mime_types );
+		return $valid_images->is_satisfied_by( $attachment );
 	}
 }
 
