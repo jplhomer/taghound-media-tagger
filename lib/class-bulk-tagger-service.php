@@ -2,8 +2,8 @@
 
 namespace Taghound_Media_Tagger;
 
-use \Taghound_Media_Tagger\Clarifai\API\Client;
-use \Taghound_Media_Tagger\Tagger_Service;
+use Taghound_Media_Tagger\Clarifai\API\Client;
+use Taghound_Media_Tagger\Tagger_Service;
 
 class Bulk_Tagger_Service {
 
@@ -25,6 +25,8 @@ class Bulk_Tagger_Service {
 		$result = array(
 			'error' => false,
 			'continue' => false,
+			'tagged' => 0,
+			'failed' => 0,
 		);
 
 		// See what our max batch size is
@@ -41,9 +43,9 @@ class Bulk_Tagger_Service {
 		$results = $this->api->get_tags_for_images( $image_urls );
 
 		if ( $results['status_code'] === 'OK' ) {
-			$result_messages = $this->process_tag_results( $results );
-
-			$result['message'] = implode($result_messages, "\r\n");
+			$tags = $this->process_tag_results( $results['results'] );
+			$result['tagged'] += count($tags);
+			$result['failed'] += count($results['results']) - count($tags);
 			$result['continue'] = false; // TODO: Determine if we should continue
 		} else {
 			// Something bad happened.
@@ -61,15 +63,16 @@ class Bulk_Tagger_Service {
 	 * @return Array 		   Resulting messages
 	 */
 	public function process_tag_results( $results ) {
-		$result_messages = array();
+		$tags = array();
 
-		foreach ( $results['result']['tag'] as $tag ) {
-			// Save the tag info
-			// Create a result message based on what happened
-			// e.g. "Instagram-photo.jpg was assigned 23 tags"
+		foreach ( $results as $result ) {
+			if ( $result['status_code'] == 'OK' ) {
+				$tagger = new Tagger_Service( $this->api );
+				$tags[] = $tagger->store_tag_info( $result );
+			}
 		}
 
-		return $result_messages;
+		return $tags;
 	}
 
 	/**

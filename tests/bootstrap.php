@@ -23,3 +23,5 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
+
+require_once 'helpers/class-attachment-helper.php';
