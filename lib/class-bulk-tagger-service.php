@@ -13,6 +13,12 @@ class Bulk_Tagger_Service {
 	 */
 	protected $api = null;
 
+	/**
+	 * Errors encountered with images
+	 * @var array
+	 */
+	protected $errors = array();
+
 	public function __construct(Client $api) {
 		$this->api = $api;
 	}
@@ -26,7 +32,7 @@ class Bulk_Tagger_Service {
 			'error' => false,
 			'continue' => false,
 			'tagged' => 0,
-			'failed' => 0,
+			'failed' => array(),
 		);
 
 		// See what our max batch size is
@@ -45,7 +51,7 @@ class Bulk_Tagger_Service {
 		if ( $results['status_code'] === 'OK' ) {
 			$tags = $this->process_tag_results( $results['results'] );
 			$result['tagged'] += count($tags);
-			$result['failed'] += count($results['results']) - count($tags);
+			$result['failed'] = $this->errors;
 			$result['continue'] = false; // TODO: Determine if we should continue
 		} else {
 			// Something bad happened.
@@ -69,6 +75,13 @@ class Bulk_Tagger_Service {
 			if ( $result['status_code'] == 'OK' ) {
 				$tagger = new Tagger_Service( $this->api );
 				$tags[] = $tagger->store_tag_info( $result );
+			} else {
+				$this->errors[] = array(
+					'filename' => basename( $result['url'] ),
+					'post_id' => $result['local_id'],
+					'status_code' => $result['status_code'],
+					'status_msg' => $result['status_msg'],
+				);
 			}
 		}
 

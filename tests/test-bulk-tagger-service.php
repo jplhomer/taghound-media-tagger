@@ -14,8 +14,13 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 
 	protected $response_tags = array();
 
-	protected $num_images = 30;
+	protected $num_images = 50;
+
 	protected $num_non_images = 2;
+
+	protected $num_bad_images = 2;
+
+	protected $post_ids = array();
 
 	function setUp() {
 		parent::setUp();
@@ -23,6 +28,8 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		for ($i=0; $i < $this->num_images; $i++) {
 			$post_ids[] = Attachment_Helper::create_image_attachment();
 		}
+
+		$this->post_ids = $post_ids;
 
 		for ($i=0; $i < $this->num_non_images; $i++) {
 			Attachment_Helper::create_non_image_attachment();
@@ -44,7 +51,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 			"default_model" => "general-v1.3",
 			"max_video_bytes" => 104857600,
 			"max_video_duration" => 1800,
-			"max_batch_size" => 128,
+			"max_batch_size" => 25,
 			"max_video_batch_size" => 1,
 			"min_video_size" => 1,
 			"api_version" => 0.1
@@ -80,11 +87,23 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 			"results" => array()
 		);
 
-		foreach ($post_ids as $post_id) {
+		for ($i=0; $i < $this->response_info['max_batch_size']; $i++) {
 			$set = $resultset;
-			$set['local_id'] = "${post_id}";
+			$set['local_id'] = "${post_ids[$i]}";
+
+			if ( $i < $this->num_bad_images ) {
+				$set['status_code'] = 'ERROR';
+				$set['status_msg'] = 'This image was weird or something.';
+			}
+
 			$this->response_tags['results'][] = $set;
 		}
+	}
+
+	function test_untagged_images() {
+		$images = Bulk_Tagger_Service::untagged_images( array('posts_per_page' => $this->response_info['max_batch_size']) );
+
+		$this->assertCount( $this->response_info['max_batch_size'], $images, "Posts per page argument should be respected" );
 	}
 
 	function test_untagged_images_count() {
@@ -104,6 +123,33 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 
 		$result = $bulk_tagger->init();
 
-		$this->assertEquals( $this->num_images, $result['tagged'] );
+		$this->assertEquals( $this->response_info['max_batch_size'] - $this->num_bad_images, $result['tagged'] );
+		$this->assertEquals( $this->num_bad_images, count($result['failed']), "Images with errors should be collected" );
+
+		// Test tags with not OK statuses are marked as failed and reasons given
+		$first_failed = array_shift( $result['failed'] );
+		$this->assertInternalType( 'string', $first_failed['filename'] );
+		$this->assertContains( 'jpg', $first_failed['filename'] );
+		$this->assertEquals( 'This image was weird or something.', $first_failed['status_msg'] );
+
+		$first_tagged_result = $this->response_tags['results'][ 0 + $this->num_bad_images];
+		$this->assertEquals(
+			$first_tagged_result,
+			get_post_meta($first_tagged_result['local_id'], TMT_POST_META_KEY, true),
+			"Tag data should be persisted on the Post object"
+		);
+
+		// Make sure count is updated
+		$this->assertEquals(
+			$this->num_images - $this->response_info['max_batch_size'] + $this->num_bad_images,
+			Bulk_Tagger_Service::untagged_images_count(),
+		 	"Remaining untagged images should be less the max batch size"
+		);
+	}
+
+	function test_bulk_tagging_continuation() {
+		// Test images that failed are not re-tested in next batch
+		// Test continue param with more images than batch size
+
 	}
 }
