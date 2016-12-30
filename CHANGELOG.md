@@ -1,3 +1,8 @@
+==Changelog==
+
+= 1.0.3 =
+* Removes cruft added to last build.
+
 = 1.0.2 =
 * Updates admin UI to support WordPress 4.7
 * Adds a minimum required PHP version of 5.5.
