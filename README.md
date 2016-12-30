@@ -54,6 +54,7 @@ Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on
 
 ## Installation ##
 
+1. NOTE: You must have PHP 5.5 or greater installed on your server to activate the plugin. Ask your web host about this if you are unsure.
 1. Upload 'taghound-media-tagger' to the '/wp-content/plugins/' directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit the [Clarifai Developer Portal](https://developer.clarifai.com/) and create a free or paid account
@@ -92,6 +93,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 
 ## Changelog ##
+
+### 1.0.2 ###
+* Adds a minimum required PHP version of 5.5.
 
 ### 1.0.1 ###
 * FEATURE: See Clarifai API usage data under Media settings.
