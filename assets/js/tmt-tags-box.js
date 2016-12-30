@@ -84,16 +84,28 @@ var IatTagBox, array_unique_noempty;
 
 				// If tags editing isn't disabled, create the X button.
 				if ( ! disabled ) {
-					xbutton = $( '<a id="' + id + '-check-num-' + key + '" class="ntdelbutton" tabindex="0">X</a>' );
+					/*
+					 * Build the X buttons, hide the X icon with aria-hidden and
+					 * use visually hidden text for screen readers.
+					 */
+					xbutton = $( '<button type="button" id="' + id + '-check-num-' + key + '" class="ntdelbutton">' +
+						'<span class="remove-tag-icon" aria-hidden="true"></span>' +
+						'<span class="screen-reader-text">' + window.tagsSuggestL10n.removeTerm + ' ' + val + '</span>' +
+						'</button>' );
 
 					xbutton.on( 'click keypress', function( e ) {
-						// Trigger function if pressed Enter - keyboard navigation
-						if ( e.type === 'click' || e.keyCode === 13 ) {
-							// When using keyboard, move focus back to the new tag field.
-							if ( e.keyCode === 13 ) {
-								$( this ).closest( '.tagsdiv' ).find( 'input.newtag' ).focus();
-							}
+						// On click or when using the Enter/Spacebar keys.
+						if ( 'click' === e.type || 13 === e.keyCode || 32 === e.keyCode ) {
+							/*
+							 * When using the keyboard, move focus back to the
+							 * add new tag field. Note: when releasing the pressed
+							 * key this will fire the `keyup` event on the input.
+							 */
+							if ( 13 === e.keyCode || 32 === e.keyCode ) {
+ 								$( this ).closest( '.tagsdiv' ).find( 'input.newtag' ).focus();
+ 							}
 
+							IatTagBox.userAction = 'remove';
 							IatTagBox.parseTags( this );
 						}
 					});
@@ -104,6 +116,8 @@ var IatTagBox, array_unique_noempty;
 				// Append the span to the tag list.
 				tagchecklist.append( span );
 			});
+			// The buttons list is built now, give feedback to screen reader users.
+			IatTagBox.screenReadersMessage();
 		},
 
 		flushTags : function( el, a, f ) {
@@ -156,6 +170,37 @@ var IatTagBox, array_unique_noempty;
 
 				$( '#' + id ).after( r );
 			});
+		},
+
+		/**
+		 * Track the user's last action.
+		 *
+		 * @since 4.7.0
+		 */
+		userAction: '',
+
+		/**
+		 * Dispatch an audible message to screen readers.
+		 *
+		 * @since 4.7.0
+		 */
+		screenReadersMessage: function() {
+			var message;
+
+			switch ( this.userAction ) {
+				case 'remove':
+					message = window.tagsSuggestL10n.termRemoved;
+					break;
+
+				case 'add':
+					message = window.tagsSuggestL10n.termAdded;
+					break;
+
+				default:
+					return;
+			}
+
+			window.wp.a11y.speak( message, 'assertive' );
 		},
 
 		init : function( $el ) {

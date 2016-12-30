@@ -53,7 +53,7 @@ class Taghound_Media_Tagger {
 				return;
 			}
 
-			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array('jquery', 'suggest') );
+			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array('jquery', 'suggest', 'tags-suggest') );
 			wp_localize_script( 'tmt-tags-box', 'tagsBoxL10n', array(
 				'tagDelimiter' => _x( ',', 'tag delimiter' ),
 			));
