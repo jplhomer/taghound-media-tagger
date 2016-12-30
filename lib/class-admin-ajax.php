@@ -23,7 +23,11 @@ class Ajax {
 
 			$response['results'] = $results;
 
-			wp_send_json_success( $response );
+			if ( $results['error'] )  {
+				wp_send_json_error( $response );
+			} else {
+				wp_send_json_success( $response );
+			}
 		});
 	}
 }

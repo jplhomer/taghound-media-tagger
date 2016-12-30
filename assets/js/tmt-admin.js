@@ -2,7 +2,11 @@
 'use strict';
 
 jQuery(function($) {
+	var bulkTagSelector = '[data-bulk-tag-init]';
+
 	var makeBulkTaggingRequest = function() {
+		$(bulkTagSelector).attr('disabled', true);
+
 		$.post(
 			ajaxurl,
 			{
@@ -10,8 +14,16 @@ jQuery(function($) {
 			},
 			function(response) {
 				if ( response.success ) {
-					console.log(response.data);
+					// TODO: Update count in UI
+					if ( response.data.continue ) {
+						makeBulkTaggingRequest();
+					} else {
+						// TODO: Show success in UI
+						console.log(response.data);
+					}
 				} else {
+					// TODO: Show error in UI
+					$(bulkTagSelector).removeAttr('disabled');
 					console.log(response);
 				}
 			}
@@ -54,8 +66,6 @@ jQuery(function($) {
 	 * Kick off bulk tagging
 	 */
 	var setUpBulkTagging = function() {
-		var bulkTagSelector = '[data-bulk-tag-init]';
-
 		if ( ! $(bulkTagSelector).length ) {
 			return false;
 		}
