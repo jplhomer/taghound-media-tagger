@@ -3,7 +3,7 @@
 **Tags:** media gallery, tagging, images, deep learning, neural network, admin  
 **Requires at least:** 3.9  
 **Tested up to:** 4.7  
-**Stable tag:** 1.0.2  
+**Stable tag:** 1.0.3  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -94,6 +94,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 ## Changelog ##
 
+### 1.0.3 ###
+* Removes cruft added to last build.
+
 ### 1.0.2 ###
 * Updates admin UI to support WordPress 4.7
 * Adds a minimum required PHP version of 5.5.
@@ -103,3 +106,4 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 ### 1.0.0 ###
 * Taghound Media Tagger.
+
