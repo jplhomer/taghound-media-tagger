@@ -27,20 +27,25 @@ class Bulk_Tagger_Service {
 	 * Start a new bulk tagging session
 	 * @return array    Results
 	 */
-	public function init() {
-		$result = array(
+	public function init( $args = array() ) {
+		$result = wp_parse_args($args, array(
 			'error' => false,
 			'continue' => false,
 			'tagged' => 0,
 			'failed' => array(),
-		);
+			'skip' => array(),
+		));
 
 		// See what our max batch size is
 		$info = $this->api->get_info();
 		$max_batch_size = $info['max_batch_size'];
 
+		if ( $max_batch_size == 0 ) {
+			return false;
+		}
+
 		// Get that many images from repository
-		$images = $this->untagged_images( array('posts_per_page' => $max_batch_size) );
+		$images = $this->untagged_images( array('posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
 		$image_urls = array();
 		foreach ($images as $image) {
 			$image_urls[ $image->ID ] = $image->guid;
@@ -52,7 +57,8 @@ class Bulk_Tagger_Service {
 			$tags = $this->process_tag_results( $results['results'] );
 			$result['tagged'] += count($tags);
 			$result['failed'] = $this->errors;
-			$result['continue'] = false; // TODO: Determine if we should continue
+
+			$result['continue'] = ( count($result['failed']) != $this->untagged_images_count() );
 		} else {
 			// Something bad happened.
 			$result['error'] = true;

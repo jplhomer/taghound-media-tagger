@@ -20,7 +20,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 
 	protected $num_bad_images = 2;
 
-	protected $post_ids = array();
+	protected $failed_post_ids = array();
 
 	function setUp() {
 		parent::setUp();
@@ -28,8 +28,6 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		for ($i=0; $i < $this->num_images; $i++) {
 			$post_ids[] = Attachment_Helper::create_image_attachment();
 		}
-
-		$this->post_ids = $post_ids;
 
 		for ($i=0; $i < $this->num_non_images; $i++) {
 			Attachment_Helper::create_non_image_attachment();
@@ -127,10 +125,14 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		$this->assertEquals( $this->num_bad_images, count($result['failed']), "Images with errors should be collected" );
 
 		// Test tags with not OK statuses are marked as failed and reasons given
+		$this->failed_post_ids = array_map(function($failed) {
+			return $failed['post_id'];
+		}, $result['failed']);
 		$first_failed = array_shift( $result['failed'] );
 		$this->assertInternalType( 'string', $first_failed['filename'] );
 		$this->assertContains( 'jpg', $first_failed['filename'] );
 		$this->assertEquals( 'This image was weird or something.', $first_failed['status_msg'] );
+		$this->assertTrue( isset($first_failed['post_id']) );
 
 		$first_tagged_result = $this->response_tags['results'][ 0 + $this->num_bad_images];
 		$this->assertEquals(
@@ -145,6 +147,19 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 			Bulk_Tagger_Service::untagged_images_count(),
 		 	"Remaining untagged images should be less the max batch size"
 		);
+	}
+
+	function test_rate_limit() {
+		$response_info = $this->response_info;
+
+		$response_info['max_batch_size'] = 0;
+
+		$this->api->expects( $this->any() )
+				  ->method( 'get_info' )
+				  ->will( $this->returnValue( $response_info ) );
+
+		$bulk_tagger = new Bulk_Tagger_Service( $this->api );
+		$this->assertFalse( $bulk_tagger->init() );
 	}
 
 	function test_bulk_tagging_continuation() {
