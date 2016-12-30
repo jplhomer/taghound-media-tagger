@@ -10,9 +10,10 @@ branches:
     - master
 
 php:
-  - 5.3
+  - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   - WP_VERSION=latest WP_MULTISITE=0
@@ -21,10 +22,21 @@ env:
 
 matrix:
   include:
-    - php: 5.3
+    - php: 5.5
       env: WP_VERSION=latest WP_MULTISITE=1
 
 before_script:
   - bash bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 
 script: phpunit
+
+deploy:
+  #
+  # Auto-deploys the built plugin to WordPress.org on push to master branch
+  #
+  provider: script
+  skip_cleanup: true
+  script: ./scripts/deploy.sh
+  on:
+    branch: master
+    php: 7.0
