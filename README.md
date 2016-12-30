@@ -2,8 +2,8 @@
 **Contributors:** [jplhomer](https://profiles.wordpress.org/jplhomer)  
 **Tags:** media gallery, tagging, images, deep learning, neural network, admin  
 **Requires at least:** 3.9  
-**Tested up to:** 4.5.3  
-**Stable tag:** 1.0.1  
+**Tested up to:** 4.7  
+**Stable tag:** 1.0.3  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -54,6 +54,7 @@ Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on
 
 ## Installation ##
 
+1. NOTE: You must have PHP 5.5 or greater installed on your server to activate the plugin. Ask your web host about this if you are unsure.
 1. Upload 'taghound-media-tagger' to the '/wp-content/plugins/' directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit the [Clarifai Developer Portal](https://developer.clarifai.com/) and create a free or paid account
@@ -93,8 +94,16 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 ## Changelog ##
 
+### 1.0.3 ###
+* Removes cruft added to last build.
+
+### 1.0.2 ###
+* Updates admin UI to support WordPress 4.7
+* Adds a minimum required PHP version of 5.5.
+
 ### 1.0.1 ###
 * FEATURE: See Clarifai API usage data under Media settings.
 
 ### 1.0.0 ###
 * Taghound Media Tagger.
+

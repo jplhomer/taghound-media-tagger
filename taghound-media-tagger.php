@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Taghound Media Tagger
- * Version: 1.0.1
+ * Version: 1.0.3
  * Description: Automatically adds tags to new images using the Clarifai API.
  * Author: Joshua P. Larson
  * Author URI: http://jplhomer.org
@@ -26,6 +26,11 @@ class Taghound_Media_Tagger {
 	}
 
 	public function __construct() {
+		if ( version_compare( PHP_VERSION, '5.5', '<' ) ) {
+		    add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>".__('Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger') ."</p></div>';" ) );
+		    return;
+		}
+
 		define('TMT_SETTING_PREFIX', 'tmt_');
 		define('TMT_TOKEN_SETTING', TMT_SETTING_PREFIX . 'clarifai_token');
 		define('TMT_POST_META_KEY', TMT_SETTING_PREFIX . 'clarifai_data');
@@ -55,7 +60,7 @@ class Taghound_Media_Tagger {
 				return;
 			}
 
-			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array('jquery', 'suggest') );
+			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array('jquery', 'suggest', 'tags-suggest') );
 			wp_localize_script( 'tmt-tags-box', 'tagsBoxL10n', array(
 				'tagDelimiter' => _x( ',', 'tag delimiter' ),
 			));
