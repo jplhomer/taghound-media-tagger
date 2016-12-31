@@ -78,4 +78,8 @@ class TagTest extends WP_UnitTestCase {
 		update_option( $option_name, 'on' );
 		$this->assertTrue( tmt_is_upload_only() );
 	}
+
+	function tearDown() {
+		Attachment_Helper::delete_all_attachments();
+	}
 }

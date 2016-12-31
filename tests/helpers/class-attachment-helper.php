@@ -23,4 +23,22 @@ class Attachment_Helper extends WP_UnitTestCase {
 
 		return $post_id;
 	}
+
+	/**
+	 * Delete all attachments. Use for tearing down.
+	 *
+	 * @return void
+	 */
+	public static function delete_all_attachments() {
+		$post_ids = get_posts( array(
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		));
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id );
+		}
+	}
 }

@@ -166,4 +166,8 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		// Test images that failed are not re-tested in next batch
 		// Test continue param with more images than batch size
 	}
+
+	function tearDown() {
+		Attachment_Helper::delete_all_attachments();
+	}
 }

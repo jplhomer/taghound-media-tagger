@@ -127,6 +127,7 @@ class Bulk_Tagger_Service {
 		$args = wp_parse_args($args, array(
 			'posts_per_page' => -1,
 			'post_type' => 'attachment',
+			'post_status' => 'any',
 			'meta_query' => array(
 				array(
 					'key' => TMT_POST_META_KEY,

@@ -82,16 +82,6 @@ class AttachmentTest extends WP_UnitTestCase {
 	}
 
 	function tearDown() {
-		// Delete the attachments
-		$args = array(
-			'post_type' => 'attachment',
-			'posts_per_page' => -1,
-		);
-
-		$attachments = get_posts( $args );
-
-		foreach ( $attachments as $attachment ) {
-			wp_delete_post( $attachment->ID );
-		}
+		Attachment_Helper::delete_all_attachments();
 	}
 }

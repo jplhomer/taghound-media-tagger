@@ -14,4 +14,25 @@ class ValidImageSpecificationTest extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'post_mime_type', $args );
 		$this->assertInternalType( 'array', $args['post_mime_type'] );
 	}
+
+	public function test_image_scope_works()
+	{
+		$post_id = Attachment_Helper::create_image_attachment();
+
+		$args = array(
+			'post_type' => 'attachment',
+			'post_status' => 'any',
+		);
+
+		// $args = (new Valid_Image_Specification)->as_scope( $args );
+		$results = get_posts( $args );
+		$this->assertTrue( count( $results ) > 0 );
+
+		$first = array_shift( $results );
+		$this->assertEquals( $post_id, $first->ID );
+	}
+
+	function tearDown() {
+		Attachment_Helper::delete_all_attachments();
+	}
 }
