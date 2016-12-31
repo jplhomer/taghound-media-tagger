@@ -114,7 +114,7 @@ class Bulk_Tagger_Service {
 	 * @return boolean
 	 */
 	public static function enabled() {
-		return tmt_is_enabled() && ! tmt_is_upload_only();
+		return tmt_can_be_enabled() && ! tmt_is_upload_only();
 	}
 
 	/**
