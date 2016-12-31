@@ -9,9 +9,9 @@ class ValidImageSpecificationTest extends WP_UnitTestCase {
 		);
 
 		$valid_images = new Valid_Image_Specification;
-		$args = $valid_images->as_scope($args);
+		$args = $valid_images->as_scope( $args );
 
-		$this->assertArrayHasKey('post_mime_type', $args);
-		$this->assertInternalType('array', $args['post_mime_type']);
+		$this->assertArrayHasKey( 'post_mime_type', $args );
+		$this->assertInternalType( 'array', $args['post_mime_type'] );
 	}
 }

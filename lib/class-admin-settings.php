@@ -9,18 +9,21 @@ class Settings {
 
 	/**
 	 * The page where our options are being printed
+	 *
 	 * @var string
 	 */
 	protected $page = 'taghound-settings';
 
 	/**
 	 * The prefix to use when creating setting names
+	 *
 	 * @var string
 	 */
 	protected $prefix = '';
 
 	/**
 	 * Holds our default settings
+	 *
 	 * @var array
 	 */
 	protected $settings = array();
@@ -53,14 +56,14 @@ class Settings {
 						'name'    => 'enabled',
 						'title'   => 'Enable for all new Images',
 						'type'    => 'checkbox',
-						'disabled' => !tmt_can_be_enabled(),
+						'disabled' => ! tmt_can_be_enabled(),
 					),
 					array(
 						'name'     => 'upload_only',
 						'title'    => 'My website is not publicly accessible',
 						'help'     => 'If checked, images will be uploaded for analysis instead of downloaded.',
 						'type'     => 'checkbox',
-						'disabled' => !tmt_can_be_enabled(),
+						'disabled' => ! tmt_can_be_enabled(),
 					),
 				),
 			),
@@ -76,23 +79,24 @@ class Settings {
 
 	/**
 	 * Initialize settings sections
+	 *
 	 * @return void
 	 */
 	public function init_settings_sections() {
 		add_options_page(
-			"Taghound Media Tagger",
-			"Taghound",
+			'Taghound Media Tagger',
+			'Taghound',
 			'manage_options',
 			$this->page,
 			array( $this, 'print_options_page' )
 		);
 
-		foreach ($this->settings as $key => $section) {
-            if( method_exists( 'Taghound_Media_Tagger\Settings', "section_content_$key" ) ) {
-                $section_callback = array( $this, "section_content_$key" );
-            } else {
-                $section_callback = array();
-            }
+		foreach ( $this->settings as $key => $section ) {
+			if ( method_exists( 'Taghound_Media_Tagger\Settings', "section_content_$key" ) ) {
+				$section_callback = array( $this, "section_content_$key" );
+			} else {
+				$section_callback = array();
+			}
 
 			add_settings_section(
 				"{$this->prefix}_{$section['name']}",
@@ -101,7 +105,7 @@ class Settings {
 				$this->page
 			);
 
-			foreach ($section['fields'] as $setting) {
+			foreach ( $section['fields'] as $setting ) {
 				add_settings_field(
 					"{$this->prefix}_{$setting['name']}",
 					$setting['title'],
@@ -121,6 +125,7 @@ class Settings {
 
 	/**
 	 * Prints a checkbox input
+	 *
 	 * @param  array $setting  Settings
 	 * @return void
 	 */
@@ -130,13 +135,14 @@ class Settings {
 
 		echo '<input type="checkbox" name="' . $this->prefix . $setting['name'] . '" ' . $checked . ' ' . $disabled . ' />';
 
-		if ( !empty($setting['help']) ) {
+		if ( ! empty( $setting['help'] ) ) {
 			echo '<small><em>' . $setting['help'] . '</em></small>';
 		}
 	}
 
 	/**
 	 * Print a basic select input
+	 *
 	 * @param  array $setting  Settings
 	 * @return void
 	 */
@@ -145,7 +151,7 @@ class Settings {
 		$options = call_user_func( $setting['options'] );
 
 		echo '<select name="' . $this->prefix . $setting['name'] . '" id="' . $this->prefix . $setting['name'] . '">';
-		foreach ($options as $val => $name) {
+		foreach ( $options as $val => $name ) {
 			echo '<option value="' . $val . '" ' . selected( $value, $val, false ) . '>' . $name . '</option>';
 		}
 		echo '</select>';
@@ -153,6 +159,7 @@ class Settings {
 
 	/**
 	 * Print out a text field input
+	 *
 	 * @param  array $setting  Original settings
 	 * @return void
 	 */
@@ -164,6 +171,7 @@ class Settings {
 
 	/**
 	 * Prints the Options page content
+	 *
 	 * @return void
 	 */
 	public function print_options_page() {
@@ -179,48 +187,49 @@ class Settings {
 
 		$usage = $cf->get_usage_data();
 
-		echo "<h3>Taghound - Clarifai API Usage</h3>";
+		echo '<h3>Taghound - Clarifai API Usage</h3>';
 
 		if ( ! is_a( $usage, 'Taghound_Media_Tagger\Clarifai\API\Usage' ) ) {
-			echo "We had trouble loading your Clarifai API usage. Please try again later.";
+			echo 'We had trouble loading your Clarifai API usage. Please try again later.';
 			return;
 		}
 
 		$hourly = $usage->hourly;
 		$monthly = $usage->monthly;
 
-		echo "<p><strong>Hourly</strong></p>";
+		echo '<p><strong>Hourly</strong></p>';
 		echo "<progress class='tmt-progress' value='{$hourly['consumed']}' max='{$hourly['limit']}'></progress>";
 		echo "<p>{$hourly['consumed']} of {$hourly['limit']} units used";
-		echo "<hr>";
-		echo "<p><strong>Monthly</strong></p>";
+		echo '<hr>';
+		echo '<p><strong>Monthly</strong></p>';
 		echo "<progress class='tmt-progress' value='{$monthly['consumed']}' max='{$monthly['limit']}'></progress>";
 		echo "<p>{$monthly['consumed']} of {$monthly['limit']} units used";
 	}
 
 	public function print_bulk_tagger() {
 		$untagged_images_count = Bulk_Tagger_Service::untagged_images_count();
-		$disabled = !Bulk_Tagger_Service::enabled();
+		$disabled = ! Bulk_Tagger_Service::enabled();
 		$disabled_attr = $disabled ? 'disabled' : '';
 
-		echo "<h3>Taghound Bulk Tagging</h3>";
+		echo '<h3>Taghound Bulk Tagging</h3>';
 
 		if ( $untagged_images_count > 0 ) {
 			echo "<p>You have <strong>${untagged_images_count}</strong> untagged images.";
 			echo "<p><button class='button' data-bulk-tag-init ${disabled_attr}>Tag Them Now</button>";
 
 			if ( $disabled ) {
-				echo " <em>Bulk tagging is not available for websites that are not publicly accessible.</em>";
+				echo ' <em>Bulk tagging is not available for websites that are not publicly accessible.</em>';
 			}
 
-			echo "</p>";
+			echo '</p>';
 		} else {
-			echo "<p>All of your images have tags!</p>";
+			echo '<p>All of your images have tags!</p>';
 		}
 	}
 
 	/**
 	 * Print instructions for getting an API key from Clarifai.
+	 *
 	 * @return void
 	 */
 	public function section_content_main() {

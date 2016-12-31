@@ -10,6 +10,7 @@ class Valid_Image_Specification {
 
 	/**
 	 * See if an attachment is an image
+	 *
 	 * @param  WP_Post $attachment
 	 * @return boolean
 	 */
@@ -19,6 +20,7 @@ class Valid_Image_Specification {
 
 	/**
 	 * Scope the provided query args with valid image types
+	 *
 	 * @param  array $query_args  Post query args
 	 * @return array              Query args with scope
 	 */

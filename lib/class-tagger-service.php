@@ -7,12 +7,13 @@ use Taghound_Media_Tagger\Clarifai\API\Client;
 class Tagger_Service {
 	protected $api = null;
 
-	public function __construct(Client $api) {
+	public function __construct( Client $api ) {
 		$this->api = $api;
 	}
 
 	/**
 	 * Persist Clarifai tag data
+	 *
 	 * @param  Clarifai Tag result set
 	 * @return array      Tags
 	 */

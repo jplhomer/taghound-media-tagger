@@ -4,31 +4,35 @@ namespace Taghound_Media_Tagger\Clarifai\API;
 class Client {
 	/**
 	 * Current API version
+	 *
 	 * @var string
 	 */
 	protected $api_version = 'v1';
 
 	/**
 	 * Base API URL
+	 *
 	 * @var string
 	 */
 	protected $api_base_url = 'https://api.clarifai.com';
 
 	/**
 	 * Client ID
+	 *
 	 * @var string
 	 */
 	protected $client_id = '';
 
 	/**
 	 * Client Secret
+	 *
 	 * @var string
 	 */
 	protected $client_secret = '';
 
 	public function __construct( $options ) {
-		if ( empty($options['client_id']) || empty($options['client_secret']) ) {
-			throw new \Exception("Please provide a client_id and client_secret");
+		if ( empty( $options['client_id'] ) || empty( $options['client_secret'] ) ) {
+			throw new \Exception( 'Please provide a client_id and client_secret' );
 		}
 
 		$this->client_id = $options['client_id'];
@@ -37,7 +41,8 @@ class Client {
 
 	/**
 	 * Determines if a token object is expired using a custom value we calculate
-	 * @param  array  $token  Token with 'expiration_date'
+	 *
+	 * @param  array $token  Token with 'expiration_date'
 	 * @return boolean
 	 */
 	protected function is_token_expired( $token ) {
@@ -46,6 +51,7 @@ class Client {
 
 	/**
 	 * Gets the API keys set on the object
+	 *
 	 * @return array
 	 */
 	protected function get_api_keys() {
@@ -57,12 +63,13 @@ class Client {
 
 	/**
 	 * Gets the auth token. Generates ones if it's invalid or expired.
+	 *
 	 * @return array Token object
 	 */
 	protected function get_auth_token() {
-		$token = get_option(TMT_TOKEN_SETTING);
+		$token = get_option( TMT_TOKEN_SETTING );
 
-		if ( !$token || empty($token['access_token']) || $this->is_token_expired($token) ) {
+		if ( ! $token || empty( $token['access_token'] ) || $this->is_token_expired( $token ) ) {
 			return $this->renew_auth_token();
 		}
 
@@ -71,6 +78,7 @@ class Client {
 
 	/**
 	 * Get a new auth token
+	 *
 	 * @return array Auth token array
 	 */
 	protected function renew_auth_token() {
@@ -82,7 +90,7 @@ class Client {
 				'client_id' => $keys['client_id'],
 			    'client_secret' => $keys['client_secret'],
 			    'grant_type' => 'client_credentials',
-			)
+			),
 		);
 
 		$results = $this->_make_request( $args, true );
@@ -90,13 +98,14 @@ class Client {
 		// Calculate the expiration date of this token
 		$results['expiration_date'] = time() + $results['expires_in'];
 
-		update_option(TMT_TOKEN_SETTING, $results);
+		update_option( TMT_TOKEN_SETTING, $results );
 
 		return $results;
 	}
 
 	/**
 	 * Get info about max batch size, etc from the info endpoint
+	 *
 	 * @return array  Info set from Clarifai
 	 */
 	public function get_info() {
@@ -115,6 +124,7 @@ class Client {
 
 	/**
 	 * Get tags for an image
+	 *
 	 * @param  string $image_path_or_url File path or URL to image
 	 * @return array              Array ( tags => array, doc_id => int )
 	 */
@@ -150,16 +160,17 @@ class Client {
 
 	/**
 	 * Get tags for multiple images
+	 *
 	 * @param  Array $image_urls  Array of image URLs
 	 * @return Array 			  Tag responses
 	 */
 	public function get_tags_for_images( $image_urls ) {
 		$args = array(
-			'endpoint' => 'tag'
+			'endpoint' => 'tag',
 		);
 
 		$image_url_string = '';
-		foreach ($image_urls as $id => $url) {
+		foreach ( $image_urls as $id => $url ) {
 			$image_url_string .= 'url=' . $url . '&local_id=' . $id . '&';
 		}
 
@@ -176,6 +187,7 @@ class Client {
 
 	/**
 	 * Get usage data for a user's account
+	 *
 	 * @return Usage object or Exception
 	 */
 	public function get_usage_data() {
@@ -196,7 +208,7 @@ class Client {
 	 * Performs the general API request
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
-		$is_post = !empty( $args['post'] );
+		$is_post = ! empty( $args['post'] );
 
 		if ( ! $authenticating ) {
 			$token = $this->get_auth_token();
@@ -210,25 +222,25 @@ class Client {
 		$url = $this->api_base_url . '/' . $this->api_version . '/' . $args['endpoint'] . '/';
 
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt( $ch, CURLOPT_URL, $url );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 
 		if ( $is_post ) {
-			curl_setopt($ch, CURLOPT_POST, 1);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $args['post']);
+			curl_setopt( $ch, CURLOPT_POST, 1 );
+			curl_setopt( $ch, CURLOPT_POSTFIELDS, $args['post'] );
 		}
 
-		if ( ! empty($args['headers']) ) {
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $args['headers']);
+		if ( ! empty( $args['headers'] ) ) {
+			curl_setopt( $ch, CURLOPT_HTTPHEADER, $args['headers'] );
 		}
 
-		$result = curl_exec($ch);
+		$result = curl_exec( $ch );
 
 		if ( ! $result ) {
-			throw new \Exception( curl_error($ch) );
+			throw new \Exception( curl_error( $ch ) );
 		}
 
-		curl_close($ch);
+		curl_close( $ch );
 
 		return json_decode( $result, true );
 	}

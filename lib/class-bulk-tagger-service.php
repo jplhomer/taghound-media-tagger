@@ -9,22 +9,25 @@ class Bulk_Tagger_Service {
 
 	/**
 	 * The Clarifai API
+	 *
 	 * @var Client
 	 */
 	protected $api = null;
 
 	/**
 	 * Errors encountered with images
+	 *
 	 * @var array
 	 */
 	protected $errors = array();
 
-	public function __construct(Client $api) {
+	public function __construct( Client $api ) {
 		$this->api = $api;
 	}
 
 	/**
 	 * Start a new bulk tagging session
+	 *
 	 * @return array    Results
 	 */
 	public function init( $args = array() ) {
@@ -45,9 +48,9 @@ class Bulk_Tagger_Service {
 		}
 
 		// Get that many images from repository
-		$images = $this->untagged_images( array('posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
+		$images = $this->untagged_images( array( 'posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
 		$image_urls = array();
-		foreach ($images as $image) {
+		foreach ( $images as $image ) {
 			$image_urls[ $image->ID ] = $image->guid;
 		}
 
@@ -55,10 +58,10 @@ class Bulk_Tagger_Service {
 
 		if ( $results['status_code'] === 'OK' ) {
 			$tags = $this->process_tag_results( $results['results'] );
-			$result['tagged'] += count($tags);
+			$result['tagged'] += count( $tags );
 			$result['failed'] = $this->errors;
 
-			$result['continue'] = ( count($result['failed']) != $this->untagged_images_count() );
+			$result['continue'] = ( count( $result['failed'] ) != $this->untagged_images_count() );
 		} else {
 			// Something bad happened.
 			$result['error'] = true;
@@ -71,6 +74,7 @@ class Bulk_Tagger_Service {
 
 	/**
 	 * Process the tags along with the images
+	 *
 	 * @param  Array $results  API results
 	 * @return Array 		   Resulting messages
 	 */
@@ -96,15 +100,17 @@ class Bulk_Tagger_Service {
 
 	/**
 	 * Can bulk tagging happen?
+	 *
 	 * @return boolean
 	 */
 	public static function enabled() {
-		return tmt_is_enabled() && !tmt_is_upload_only();
+		return tmt_is_enabled() && ! tmt_is_upload_only();
 	}
 
 	/**
 	 * Get all untagged images
-	 * @param  array  $args Optional arguments
+	 *
+	 * @param  array $args Optional arguments
 	 * @return array        WP Attachment objects
 	 */
 	public static function untagged_images( $args = array() ) {
@@ -130,6 +136,7 @@ class Bulk_Tagger_Service {
 
 	/**
 	 * Get the number of untagged images in the library
+	 *
 	 * @return int
 	 */
 	public static function untagged_images_count() {

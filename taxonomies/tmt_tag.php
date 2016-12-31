@@ -14,7 +14,7 @@ function TMT_tag_init() {
 			'manage_terms'  => 'edit_posts',
 			'edit_terms'    => 'edit_posts',
 			'delete_terms'  => 'edit_posts',
-			'assign_terms'  => 'edit_posts'
+			'assign_terms'  => 'edit_posts',
 		),
 		'labels'            => array(
 			'name'                       => __( 'Tags', 'taghound-media-tagger' ),

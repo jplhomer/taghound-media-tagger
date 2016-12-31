@@ -9,7 +9,7 @@ class Ajax {
 	protected static $_instance = null;
 
 	public static function instance() {
-		if ( is_null(self::$_instance) ) {
+		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -23,7 +23,7 @@ class Ajax {
 
 			$response['results'] = $results;
 
-			if ( $results['error'] )  {
+			if ( $results['error'] ) {
 				wp_send_json_error( $response );
 			} else {
 				wp_send_json_success( $response );
