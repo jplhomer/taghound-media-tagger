@@ -52,13 +52,29 @@ class Taghound_Media_Tagger {
 		}
 
 		add_action( 'admin_enqueue_scripts', function( $hook ) {
-			$pages = array('post.php', 'upload.php', 'options-media.php');
+			global $wp_version;
+
+			$pages = array( 'post.php', 'upload.php', 'settings_page_taghound-settings' );
 
 			if ( ! in_array( $hook, $pages ) ) {
 				return;
 			}
 
-			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array('jquery', 'suggest', 'tags-suggest') );
+			$tag_box_script_name = 'tmt-tags-box';
+			$tag_box_dependencies = array( 'jquery', 'suggest', 'tags-suggest' );
+
+			if ( version_compare( $wp_version, '4.7', '<' ) ) {
+				$tag_box_script_name .= '-legacy';
+				unset( $tag_box_dependencies['tags-suggest'] );
+			}
+
+			wp_enqueue_script(
+				'tmt-tags-box',
+				plugin_dir_url( __FILE__ ) . '/assets/js/' . $tag_box_script_name . '.js',
+				$tag_box_dependencies,
+				filemtime( plugin_dir_path( __FILE__ ) . '/assets/js/' . $tag_box_script_name . '.js' )
+			);
+
 			wp_localize_script( 'tmt-tags-box', 'tagsBoxL10n', array(
 				'tagDelimiter' => _x( ',', 'tag delimiter' ),
 			));
