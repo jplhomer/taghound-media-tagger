@@ -24,7 +24,7 @@ class ValidImageSpecificationTest extends WP_UnitTestCase {
 			'post_status' => 'any',
 		);
 
-		// $args = (new Valid_Image_Specification)->as_scope( $args );
+		$args = (new Valid_Image_Specification)->as_scope( $args );
 		$results = get_posts( $args );
 		$this->assertTrue( count( $results ) > 0 );
 
