@@ -18,15 +18,18 @@ class ValidImageSpecificationTest extends WP_UnitTestCase {
 	public function test_image_scope_works()
 	{
 		$post_id = Attachment_Helper::create_image_attachment();
+		Attachment_Helper::create_non_image_attachment();
 
 		$args = array(
 			'post_type' => 'attachment',
 			'post_status' => 'any',
+			'orderby' => 'ID',
+			'order' => 'DESC',
+			'posts_per_page' => -1,
 		);
 
 		$args = (new Valid_Image_Specification)->as_scope( $args );
 		$results = get_posts( $args );
-		$this->assertTrue( count( $results ) > 0 );
 
 		$first = array_shift( $results );
 		$this->assertEquals( $post_id, $first->ID );
