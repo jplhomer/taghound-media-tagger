@@ -77,11 +77,23 @@ class Taghound_Media_Tagger {
 				return;
 			}
 
-			wp_enqueue_script( 'tmt-tags-box', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js', array( 'jquery', 'suggest', 'tags-suggest' ) );
+			wp_enqueue_script(
+				'tmt-tags-box',
+				plugin_dir_url( __FILE__ ) . '/assets/js/tmt-tags-box.js',
+				array( 'jquery', 'suggest', 'tags-suggest' ),
+				filemtime( plugin_dir_path( __FILE__ ) . '/assets/js/tmt-tags-box.js' )
+			);
+
 			wp_localize_script( 'tmt-tags-box', 'tagsBoxL10n', array(
 				'tagDelimiter' => _x( ',', 'tag delimiter' ),
 			));
-			wp_enqueue_script( 'tmt-admin', plugin_dir_url( __FILE__ ) . '/assets/js/tmt-admin.js', array( 'jquery', 'underscore' ) );
+
+			wp_enqueue_script(
+				'tmt-admin',
+				plugin_dir_url( __FILE__ ) . '/assets/js/tmt-admin.js',
+				array( 'jquery', 'underscore' ),
+				filemtime( plugin_dir_path( __FILE__ ) . '/assets/js/tmt-admin.js' )
+			);
 
 			wp_enqueue_style( 'tmt-admin', plugin_dir_url( __FILE__ ) . '/assets/css/tmt-admin.css' );
 		});
