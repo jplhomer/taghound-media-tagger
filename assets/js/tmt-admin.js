@@ -20,15 +20,19 @@ jQuery(function($) {
 			skip: []
 		};
 
-		if ( results && results.skip ) {
-			data.skip.concat(results.skip);
-		}
+		if ( results ) {
+			data.tagged = results.tagged;
 
-		if ( results && results.failed ) {
-			totalFailed += results.failed.length;
-			data.skip.concat(results.failed.map(function(result) {
-				return result['post_id'];
-			}));
+			if ( results.skip ) {
+				data.skip.concat(results.skip);
+			}
+
+			if ( results.failed ) {
+				totalFailed += results.failed.length;
+				data.skip.concat(results.failed.map(function(result) {
+					return result['post_id'];
+				}));
+			}
 		}
 
 		$.post(
