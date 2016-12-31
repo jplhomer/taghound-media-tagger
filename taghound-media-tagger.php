@@ -83,7 +83,7 @@ class Taghound_Media_Tagger {
 			$tag_box_dependencies = array( 'jquery', 'suggest', 'tags-suggest' );
 
 			if ( version_compare( $wp_version, '4.7', '<' ) ) {
-				$tag_box_script_name .= '-legacy';
+				$tag_box_script_name .= '-deprecated';
 				unset( $tag_box_dependencies['tags-suggest'] );
 			}
 
