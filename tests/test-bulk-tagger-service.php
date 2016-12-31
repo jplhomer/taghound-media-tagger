@@ -163,8 +163,8 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 	}
 
 	function test_bulk_tagging_continuation() {
-		// Test images that failed are not re-tested in next batch
-		// Test continue param with more images than batch size
+		// @TODO: Test images that failed are not re-tested in next batch
+		// @TODO: Test continue param with more images than batch size
 	}
 
 	function tearDown() {

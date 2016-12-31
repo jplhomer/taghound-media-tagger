@@ -3,26 +3,51 @@
 
 jQuery(function($) {
 	var bulkTagSelector = '[data-bulk-tag-init]';
+	var errorsSelector = '.tmt-errors';
+	var statusSelector = '.tmt-status';
+	var totalFailed = 0;
 
-	var makeBulkTaggingRequest = function() {
+	var makeBulkTaggingRequest = function( results ) {
+		// Clear inputs
 		$(bulkTagSelector).attr('disabled', true);
+		$(errorsSelector).html('');
+
+		// Grab the starting number of untagged images from the UI
+		var startingNumber = $('[data-starting-number]').text();
+
+		var data = {
+			action: 'tmt_bulk_tag',
+			skip: []
+		};
+
+		if ( results && results.skip ) {
+			data.skip.concat(results.skip);
+		}
+
+		if ( results && results.failed ) {
+			totalFailed += resuls.failed.length;
+			data.skip.concat(results.failed.map(function(result) {
+				return result['post_id'];
+			}));
+		}
 
 		$.post(
 			ajaxurl,
-			{
-				action: 'tmt_bulk_tag'
-			},
+			data,
 			function(response) {
 				if ( response.success ) {
-					// TODO: Update count in UI
-					if ( response.data.continue ) {
-						makeBulkTaggingRequest();
+					$(statusSelector).append('<p>' + response.data.results.tagged + ' of ' + startingNumber + ' images tagged...</p>');
+					if ( response.data.results.continue ) {
+						makeBulkTaggingRequest( response.data.results );
 					} else {
-						// TODO: Show success in UI
+						$(statusSelector).append('<p>Success! ' + response.data.results.tagged + ' of ' + startingNumber + ' images have been tagged.</p>');
+						if ( totalFailed ) {
+							$(statusSelector).append('<p>' + totalFailed + ' images could not be tagged.</p>');
+						}
 						console.log(response.data);
 					}
 				} else {
-					// TODO: Show error in UI
+					$(errorsSelector).html('Error: ' + response.data.results.error_message);
 					$(bulkTagSelector).removeAttr('disabled');
 					console.log(response);
 				}

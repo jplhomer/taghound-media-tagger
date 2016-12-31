@@ -240,7 +240,7 @@ class Settings {
 		echo '<h3>Taghound Bulk Tagging</h3>';
 
 		if ( $untagged_images_count > 0 ) {
-			echo "<p>You have <strong>${untagged_images_count}</strong> untagged images.";
+			echo "<p>You have <strong data-starting-number>${untagged_images_count}</strong> untagged images.";
 			echo "<p><button class='button' data-bulk-tag-init ${disabled_attr}>Tag Them Now</button>";
 
 			if ( $disabled ) {
@@ -248,6 +248,7 @@ class Settings {
 			}
 
 			echo '</p>';
+			echo '<div class="tmt-errors"></div><div class="tmt-status"></div>';
 		} else {
 			echo '<p>All of your images have tags!</p>';
 		}
