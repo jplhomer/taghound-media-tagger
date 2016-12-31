@@ -34,7 +34,16 @@ class Ajax {
 		add_action( 'wp_ajax_tmt_bulk_tag', function() {
 			$response = array();
 			$bulk_tagger = new Bulk_Tagger_Service( tmt_get_cf_client() );
-			$results = $bulk_tagger->init();
+
+			$args = array();
+			$whitelisted_keys = array( 'tagged', 'skip' );
+			foreach ( $whitelisted_keys as $key ) {
+				if ( ! empty( $_POST[ $key ] ) ) {
+					$args[ $key ] = $_POST[ $key ];
+				}
+			}
+
+			$results = $bulk_tagger->init( $args );
 
 			$response['results'] = $results;
 
