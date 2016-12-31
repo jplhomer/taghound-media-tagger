@@ -1,6 +1,9 @@
 <?php
 namespace Taghound_Media_Tagger\Clarifai\API;
 
+/**
+ * Clarifai API Client
+ */
 class Client {
 	/**
 	 * Current API version
@@ -30,6 +33,12 @@ class Client {
 	 */
 	protected $client_secret = '';
 
+	/**
+	 * Construct the API
+	 *
+	 * @param array $options Options
+	 * @throws \Exception 	If missing options.
+	 */
 	public function __construct( $options ) {
 		if ( empty( $options['client_id'] ) || empty( $options['client_secret'] ) ) {
 			throw new \Exception( 'Please provide a client_id and client_secret' );
@@ -95,7 +104,7 @@ class Client {
 
 		$results = $this->_make_request( $args, true );
 
-		// Calculate the expiration date of this token
+		// Calculate the expiration date of this token.
 		$results['expiration_date'] = time() + $results['expires_in'];
 
 		update_option( TMT_TOKEN_SETTING, $results );
@@ -206,6 +215,12 @@ class Client {
 
 	/**
 	 * Performs the general API request
+	 *
+	 * @param  array   $args           Arguments
+	 * @param  boolean $authenticating Whether this is the token exchange request
+	 *
+	 * @throws \Exception 			   If there was an error.
+	 * @return object                  JSON-decoded response
 	 */
 	protected function _make_request( $args, $authenticating = false ) {
 		$is_post = ! empty( $args['post'] );

@@ -4,14 +4,22 @@ namespace Taghound_Media_Tagger;
 
 use WP_Post;
 
+/**
+ * Specification for valid taggable images
+ */
 class Valid_Image_Specification {
 
+	/**
+	 * Valid MIME types for images
+	 *
+	 * @var array
+	 */
 	protected $valid_attachment_mime_types = array( 'image/jpeg', 'image/png', 'image/gif' );
 
 	/**
 	 * See if an attachment is an image
 	 *
-	 * @param  WP_Post $attachment
+	 * @param  WP_Post $attachment The Attachment object
 	 * @return boolean
 	 */
 	public function is_satisfied_by( WP_Post $attachment ) {

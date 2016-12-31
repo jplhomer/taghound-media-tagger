@@ -1,6 +1,9 @@
 <?php
 namespace Taghound_Media_Tagger\Clarifai\API;
 
+/**
+ * Class to manage the Clarifai API usage for the given user
+ */
 class Usage {
 	/**
 	 * Hourly usage
@@ -25,6 +28,8 @@ class Usage {
 
 	/**
 	 * Example API response:
+	 *
+	 * @param array $response Response from the API to interperet
 	 *
 	 * @see https://developer.clarifai.com/guide/usage#usage
 	 *

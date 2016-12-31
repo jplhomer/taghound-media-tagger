@@ -1,13 +1,25 @@
 <?php
-
 namespace Taghound_Media_Tagger\Admin;
 
 use \Taghound_Media_Tagger\Tagger_Service;
 use \Taghound_Media_Tagger\Bulk_Tagger_Service;
 
+/**
+ * Handle AJAX calls to the admin
+ */
 class Ajax {
+	/**
+	 * Singleton container
+	 *
+	 * @var Ajax
+	 */
 	protected static $_instance = null;
 
+	/**
+	 * Singleton instantiator
+	 *
+	 * @return Ajax
+	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
@@ -15,6 +27,9 @@ class Ajax {
 		return self::$_instance;
 	}
 
+	/**
+	 * Construct function
+	 */
 	public function __construct() {
 		add_action( 'wp_ajax_tmt_bulk_tag', function() {
 			$response = array();

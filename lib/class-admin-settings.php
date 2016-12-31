@@ -4,7 +4,15 @@ namespace Taghound_Media_Tagger;
 
 use \Taghound_Media_Tagger\Bulk_Tagger_Service;
 
+/**
+ * Handles admin settings page
+ */
 class Settings {
+	/**
+	 * Singleton container
+	 *
+	 * @var self
+	 */
 	protected static $_instance;
 
 	/**
@@ -28,6 +36,11 @@ class Settings {
 	 */
 	protected $settings = array();
 
+	/**
+	 * Instantiate Singleton
+	 *
+	 * @return instance of self
+	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
@@ -35,6 +48,9 @@ class Settings {
 		return self::$_instance;
 	}
 
+	/**
+	 * Construct singlton
+	 */
 	public function __construct() {
 		$this->prefix = TMT_SETTING_PREFIX;
 		$this->settings = array(
@@ -126,7 +142,7 @@ class Settings {
 	/**
 	 * Prints a checkbox input
 	 *
-	 * @param  array $setting  Settings
+	 * @param  array $setting  Settings.
 	 * @return void
 	 */
 	public function print_checkbox_input( $setting ) {
@@ -182,6 +198,11 @@ class Settings {
 		echo '</div></form>';
 	}
 
+	/**
+	 * Print usage data on admin page
+	 *
+	 * @return void
+	 */
 	public function print_usage_data() {
 		$cf = tmt_get_cf_client();
 
@@ -206,6 +227,11 @@ class Settings {
 		echo "<p>{$monthly['consumed']} of {$monthly['limit']} units used";
 	}
 
+	/**
+	 * Print bulk tagger UI
+	 *
+	 * @return void
+	 */
 	public function print_bulk_tagger() {
 		$untagged_images_count = Bulk_Tagger_Service::untagged_images_count();
 		$disabled = ! Bulk_Tagger_Service::enabled();
@@ -236,6 +262,11 @@ class Settings {
 		echo '<p>Enter your Clarifai Client ID and Client Secret. Get them by <a href="http://developer.clarifai.com" target="_blank">creating a free Clarifai account here &raquo;</a>';
 	}
 
+	/**
+	 * Conditionally prints admin sectinos
+	 *
+	 * @return void
+	 */
 	public function section_content_actions() {
 		if ( tmt_can_be_enabled() ) {
 			$this->print_usage_data();

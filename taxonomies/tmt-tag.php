@@ -1,7 +1,10 @@
 <?php
 namespace Taghound_Media_Tagger;
 
-function TMT_tag_init() {
+/**
+ * Initialize taxonomy registration
+ */
+function tmt_tag_init() {
 	register_taxonomy( TMT_TAG_SLUG, array( 'attachment' ), array(
 		'hierarchical'      => false,
 		'public'            => true,

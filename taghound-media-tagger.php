@@ -16,9 +16,22 @@ namespace Taghound_Media_Tagger;
 
 use Taghound_Media_Tagger\Clarifai\API\Client;
 
+/**
+ * InitializE plugin class
+ */
 class Taghound_Media_Tagger {
+	/**
+	 * Singleton container
+	 *
+	 * @var self
+	 */
 	protected static $_instance = null;
 
+	/**
+	 * Get the instance of the singleton
+	 *
+	 * @return self  The singleton
+	 */
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
 			self::$_instance = new self();
@@ -26,6 +39,9 @@ class Taghound_Media_Tagger {
 		return self::$_instance;
 	}
 
+	/**
+	 * Construct the plugin
+	 */
 	public function __construct() {
 		if ( version_compare( PHP_VERSION, '5.5', '<' ) ) {
 		    add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>" . __( 'Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger' ) . "</p></div>';" ) );
@@ -43,7 +59,7 @@ class Taghound_Media_Tagger {
 		include 'lib/class-valid-image-specification.php';
 		include 'lib/class-tagger-service.php';
 		include 'lib/class-bulk-tagger-service.php';
-		include 'taxonomies/tmt_tag.php';
+		include 'taxonomies/tmt-tag.php';
 
 		if ( is_admin() ) {
 			include_once 'lib/class-admin-settings.php';
@@ -85,13 +101,13 @@ class Taghound_Media_Tagger {
 	public function edit_attachment( $form_fields, $post ) {
 		$post_id = $post->ID;
 
-		// Only show this field if it's on the upload/media gallery page
+		// Only show this field if it's on the upload/media gallery page.
 		$screen = get_current_screen();
-		if ( ! is_null( $screen ) && $screen->base !== 'async-upload' ) {
+		if ( ! is_null( $screen ) && 'async-upload' !== $screen->base  ) {
 			return $form_fields;
 		}
 
-		// Prepare arguments for the post categories meta box
+		// Prepare arguments for the post categories meta box.
 		$args = array(
 			'args' => array(
 				'taxonomy' => TMT_TAG_SLUG,
@@ -116,7 +132,7 @@ class Taghound_Media_Tagger {
 			'html' => $html,
 		);
 
-		// Remove the default tag editor
+		// Remove the default tag editor.
 		unset( $form_fields[ TMT_TAG_SLUG ] );
 
 		return $form_fields;
@@ -126,10 +142,9 @@ class Taghound_Media_Tagger {
 	 * Handle the wordpress add_attachment filter
 	 *
 	 * @param int    $post_id  WP Post ID for attachment
-	 * @param object $cf    (optional) Pass in the API class. Used only for testing.
+	 * @param Client $cf    (optional) Pass in the API class. Used only for testing.
 	 */
 	public function handle_add_attachment( $post_id, Client $cf = null ) {
-		// Validate
 		if ( ! $this->validate_attachment_for_tagging( $post_id ) ) {
 			return $post_id;
 		}
@@ -151,10 +166,10 @@ class Taghound_Media_Tagger {
 			return $post_id;
 		}
 
-		// Store the terms as tags
+		// Store the terms as tags.
 		wp_set_object_terms( $post_id, $tags['tags'], TMT_TAG_SLUG );
 
-		// Store tag data along with the image
+		// Store tag data along with the image.
 		update_post_meta( $post_id, TMT_POST_META_KEY, $tags );
 
 		return $post_id;
@@ -168,7 +183,7 @@ class Taghound_Media_Tagger {
 	 */
 	function handle_attachment_search( $query ) {
 		if ( ! empty( $query['s'] ) ) {
-			// Get tag terms matching the search
+			// Get tag terms matching the search.
 			$term_results = get_terms( array(
 				'taxonomy' => TMT_TAG_SLUG,
 				'name__like' => $query['s'],
@@ -177,13 +192,13 @@ class Taghound_Media_Tagger {
 			));
 
 			if ( ! empty( $term_results ) ) {
-				// Run the query as-is to get keyword matches
+				// Run the query as-is to get keyword matches.
 				$keyword_results = new \WP_Query( $query );
 				$keyword_post_ids = array_map( function( $p ) {
 					return $p->ID;
 				}, $keyword_results->posts );
 
-				// Run the query again without a keyword search but with a tax query
+				// Run the query again without a keyword search but with a tax query.
 				$tag_query = $query;
 				unset( $tag_query['s'] );
 				$tag_query['tax_query'] = array(
@@ -197,11 +212,11 @@ class Taghound_Media_Tagger {
 					return $p->ID;
 				}, $tag_results->posts );
 
-				// Combine the two
+				// Combine the two.
 				$post_ids = array_merge( (array) $keyword_post_ids, (array) $tag_post_ids );
 				array_unique( $post_ids );
 
-				// Send back a dummy query with just explicit post IDs
+				// Send back a dummy query with just explicit post IDs.
 				unset( $query['s'] );
 				$query['post__in'] = $post_ids;
 			}
@@ -216,19 +231,16 @@ class Taghound_Media_Tagger {
 	 *
 	 * @param  object $post            WP Attachment Post
 	 * @param  array  $attachment_data  Attachment-specific data (unused)
-	 * @return void
+	 * @return WP_Post the Post attachment
 	 */
 	public function save_attachment( $post, $attachment_data ) {
 		$post_id = $post['ID'];
 		$slug = TMT_TAG_SLUG;
 
-		// Grab the terms from the original request
+		// Grab the terms from the original request.
 		$terms = $_POST['tax_input'][ TMT_TAG_SLUG ];
 
-		// Make them integers intead of strings
-		// $terms = array_map( function($a) {
-		// return (int) $a;
-		// }, $terms);
+		// Make them integers intead of strings.
 		$comma = _x( ',', 'tag delimiter' );
 		$terms = explode( $comma, $terms );
 
@@ -241,7 +253,7 @@ class Taghound_Media_Tagger {
 
 		if ( ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
 			// Send post data back to the edit_post() function without our data (since we already saved it)
-			// for non-AJAX calls
+			// for non-AJAX calls.
 			unset( $post['tax_input'][ TMT_TAG_SLUG ] );
 		}
 

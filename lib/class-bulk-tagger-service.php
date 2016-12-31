@@ -5,6 +5,9 @@ namespace Taghound_Media_Tagger;
 use Taghound_Media_Tagger\Clarifai\API\Client;
 use Taghound_Media_Tagger\Tagger_Service;
 
+/**
+ * Bulk Tagger Service class
+ */
 class Bulk_Tagger_Service {
 
 	/**
@@ -21,6 +24,11 @@ class Bulk_Tagger_Service {
 	 */
 	protected $errors = array();
 
+	/**
+	 * Construct the bulk service class
+	 *
+	 * @param Client $api Clarifai api client
+	 */
 	public function __construct( Client $api ) {
 		$this->api = $api;
 	}
@@ -28,7 +36,9 @@ class Bulk_Tagger_Service {
 	/**
 	 * Start a new bulk tagging session
 	 *
-	 * @return array    Results
+	 * @param  array $args Arguments
+	 *
+	 * @return array       Results
 	 */
 	public function init( $args = array() ) {
 		$result = wp_parse_args($args, array(
@@ -39,15 +49,15 @@ class Bulk_Tagger_Service {
 			'skip' => array(),
 		));
 
-		// See what our max batch size is
+		// See what our max batch size is.
 		$info = $this->api->get_info();
 		$max_batch_size = $info['max_batch_size'];
 
-		if ( $max_batch_size == 0 ) {
+		if ( 0 == $max_batch_size ) {
 			return false;
 		}
 
-		// Get that many images from repository
+		// Get that many images from repository.
 		$images = $this->untagged_images( array( 'posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
 		$image_urls = array();
 		foreach ( $images as $image ) {
@@ -56,7 +66,7 @@ class Bulk_Tagger_Service {
 
 		$results = $this->api->get_tags_for_images( $image_urls );
 
-		if ( $results['status_code'] === 'OK' ) {
+		if ( 'OK' === $results['status_code'] ) {
 			$tags = $this->process_tag_results( $results['results'] );
 			$result['tagged'] += count( $tags );
 			$result['failed'] = $this->errors;
@@ -82,7 +92,7 @@ class Bulk_Tagger_Service {
 		$tags = array();
 
 		foreach ( $results as $result ) {
-			if ( $result['status_code'] == 'OK' ) {
+			if ( 'OK' == $result['status_code'] ) {
 				$tagger = new Tagger_Service( $this->api );
 				$tags[] = $tagger->store_tag_info( $result );
 			} else {
