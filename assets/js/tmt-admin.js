@@ -25,7 +25,7 @@ jQuery(function($) {
 		}
 
 		if ( results && results.failed ) {
-			totalFailed += resuls.failed.length;
+			totalFailed += results.failed.length;
 			data.skip.concat(results.failed.map(function(result) {
 				return result['post_id'];
 			}));
@@ -98,6 +98,7 @@ jQuery(function($) {
 		$(bulkTagSelector).on('click', function(e) {
 			e.preventDefault();
 			makeBulkTaggingRequest();
+			$(statusSelector).append('<p>Beginning the tagging process. Please do not navigate away from this page...</p>');
 		});
 	};
 
