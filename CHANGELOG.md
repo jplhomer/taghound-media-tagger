@@ -1,5 +1,8 @@
 ==Changelog==
 
+= 1.0.4 =
+* BUGFIX: Adds media browser support back to < WordPress 4.7
+
 = 1.0.3 =
 * Removes cruft added to last build.
 
