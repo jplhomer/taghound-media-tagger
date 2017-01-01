@@ -237,9 +237,10 @@ class Settings {
 		$disabled = ! Bulk_Tagger_Service::enabled();
 		$disabled_attr = $disabled ? 'disabled' : '';
 
-		echo '<h3>Taghound Bulk Tagging</h3>';
+		echo '<h3>Taghound - Bulk Tagger</h3>';
 
 		if ( $untagged_images_count > 0 ) {
+			echo '<p>Use the bulk tagger to analyze any untagged images in your library. Note that this function may be limited by your Clarifai usage quota.<br>After starting the bulk tagger, <strong>do not navigate away from the page or close the browser window</strong> until it has completed.</p>';
 			echo "<p>You have <strong data-starting-number>${untagged_images_count}</strong> untagged images.";
 			echo "<p><button class='button' data-bulk-tag-init ${disabled_attr}>Tag Them Now</button>";
 
