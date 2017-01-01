@@ -5,6 +5,7 @@ use Taghound_Media_Tagger\Clarifai\API\Usage;
 class UsageTest extends WP_UnitTestCase {
 	/**
 	 * Example of an unthrottled response
+	 *
 	 * @var array
 	 */
 	protected $no_throttle = array(
@@ -26,12 +27,13 @@ class UsageTest extends WP_UnitTestCase {
 					'units' => 'per hour',
 					'wait' => 42,
 				),
-			)
-		)
+			),
+		),
 	);
 
 	/**
 	 * Example where user hits monthly throttle
+	 *
 	 * @var array
 	 */
 	protected $monthly_throttle = array(
@@ -53,12 +55,13 @@ class UsageTest extends WP_UnitTestCase {
 					'units' => 'per month',
 					'wait' => 42,
 				),
-			)
-		)
+			),
+		),
 	);
 
 	/**
 	 * Example where user hits hourly throttle
+	 *
 	 * @var array
 	 */
 	protected $hourly_throttle = array(
@@ -80,8 +83,8 @@ class UsageTest extends WP_UnitTestCase {
 					'units' => 'per month',
 					'wait' => 42,
 				),
-			)
-		)
+			),
+		),
 	);
 
 	function test_know_when_throttled() {

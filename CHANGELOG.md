@@ -1,5 +1,10 @@
 ==Changelog==
 
+= 1.1.0 =
+* FEATURE: A bulk tagger tags existing images in library
+* FEATURE: Under the hood, sends URL to image assets instead of uploading images individually
+* FEATURE: Moves Taghound settings to a dedicated screen
+
 = 1.0.4 =
 * BUGFIX: Adds media browser support back to < WordPress 4.7
 

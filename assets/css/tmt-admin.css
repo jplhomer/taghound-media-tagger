@@ -51,3 +51,13 @@ tr.compat-field-tmt-tag-editor {
     border-radius: 1em;
     min-width: 2em
 }
+
+.tmt-errors {
+	font-weight: bold;
+	color: red;
+}
+
+.tmt-status {
+	font-family: monospace;
+	margin-top: 1em;
+}
