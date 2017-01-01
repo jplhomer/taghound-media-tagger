@@ -18,10 +18,9 @@ class TagTest extends WP_UnitTestCase {
 		$this->TMT = Taghound_Media_Tagger\Taghound_Media_Tagger::instance();
 
 		// NOTE: Attachment factories with uploads weren't introduced until 4.5
-
 		// Create a demo image attachment
 		if ( is_object( $this->factory ) ) {
-			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) .  '/assets/test-image.jpeg' );
+			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		} else {
 			$post_data = array(
 				'post_type' => 'attachment',
@@ -34,10 +33,10 @@ class TagTest extends WP_UnitTestCase {
 		// Create a mock of the API
 		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
 						  ->setConstructorArgs( array( array( 'client_id' => 'nota', 'client_secret' => 'secret' ) ) )
-						  ->setMethods( array('get_tags_for_image') )
+						  ->setMethods( array( 'get_tags_for_image' ) )
 						  ->getMock();
 
-        // Mock tag data
+		// Mock tag data
 	    $this->tag_data = array(
 			'doc_id' => 1234,
 			'tags' => array( 'apple', 'banana', 'pear' ),
@@ -60,10 +59,27 @@ class TagTest extends WP_UnitTestCase {
 
 		$this->assertInternalType( 'array', $terms );
 
-		$term_names = array_map( function($term) {
+		$term_names = array_map( function( $term ) {
 			return $term->name;
 		}, $terms);
 
 		$this->assertEquals( $this->tag_data['tags'], $term_names );
+	}
+
+	/**
+	 * Make sure our upload only utility function works
+	 */
+	function test_upload_only_function_works() {
+		$option_name = TMT_SETTING_PREFIX . 'upload_only';
+
+		update_option( $option_name, '' );
+		$this->assertFalse( tmt_is_upload_only() );
+
+		update_option( $option_name, 'on' );
+		$this->assertTrue( tmt_is_upload_only() );
+	}
+
+	function tearDown() {
+		Attachment_Helper::delete_all_attachments();
 	}
 }
