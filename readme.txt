@@ -3,7 +3,7 @@ Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Tested up to: 4.7
-Stable tag: 1.0.4
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,13 +31,14 @@ Currently Taghound Media Tagger will only tag images you add **after** installin
 - Automatically tag images in your media gallery with predicted contents
 - Search for the contents of images using the Media Gallery search input
 - Filter your media gallery by a specific tag
+- Tag existing images in your media library with the click of a button
 
 = Coming Soon =
 
 We're always looking to improve Taghound Media Tagger. Here's what is on the roadmap:
 
 - Tag videos in addition to photos
-- Backdate your media library
+- Upgrade to Clarifai's V2 API
 
 = Github =
 This plugin is open-source and available on Github. Please consider contributing to the plugin if you find bugs or have a feature you'd like to see implemented:
@@ -85,6 +86,11 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 4. Filter media items by a specific tag when using the list view of the media library
 
 == Changelog ==
+
+= 1.1.0 =
+* FEATURE: A bulk tagger tags existing images in library
+* FEATURE: Under the hood, sends URL to image assets instead of uploading images individually
+* FEATURE: Moves Taghound settings to a dedicated screen
 
 = 1.0.4 =
 * BUGFIX: Adds media browser support back to < WordPress 4.7
