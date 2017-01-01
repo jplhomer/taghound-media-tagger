@@ -54,7 +54,7 @@ class Taghound_Media_Tagger {
 		add_action( 'admin_enqueue_scripts', function( $hook ) {
 			global $wp_version;
 
-			$pages = array( 'post.php', 'upload.php', 'settings_page_taghound-settings' );
+			$pages = array( 'post.php', 'upload.php', 'options-media.php' );
 
 			if ( ! in_array( $hook, $pages ) ) {
 				return;
@@ -65,7 +65,7 @@ class Taghound_Media_Tagger {
 
 			if ( version_compare( $wp_version, '4.7', '<' ) ) {
 				$tag_box_script_name .= '-deprecated';
-				unset( $tag_box_dependencies['tags-suggest'] );
+				unset( $tag_box_dependencies[2] );
 			}
 
 			wp_enqueue_script(
