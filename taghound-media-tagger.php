@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Taghound Media Tagger
- * Version: 1.0.3
+ * Version: 1.0.4
  * Description: Automatically adds tags to new images using the Clarifai API.
  * Author: Joshua P. Larson
  * Author URI: http://jplhomer.org
@@ -84,7 +84,7 @@ class Taghound_Media_Tagger {
 
 			if ( version_compare( $wp_version, '4.7', '<' ) ) {
 				$tag_box_script_name .= '-deprecated';
-				unset( $tag_box_dependencies['tags-suggest'] );
+				unset( $tag_box_dependencies[2] );
 			}
 
 			wp_enqueue_script(
