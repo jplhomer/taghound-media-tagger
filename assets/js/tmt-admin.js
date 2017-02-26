@@ -51,7 +51,12 @@ jQuery(function($) {
 						console.log(response.data);
 					}
 				} else {
-					$(errorsSelector).html('Error: ' + response.data.results.error_message);
+					var errorMessage = 'Error: ' + response.data.results.error_message + '<br>';
+					// Compile all the result messages
+					errorMessage += response.data.results.results.results.map(function(result) {
+						return result.result.error;
+					}).join('<br>');
+					$(errorsSelector).html(errorMessage);
 					$(bulkTagSelector).removeAttr('disabled');
 					console.log(response);
 				}
