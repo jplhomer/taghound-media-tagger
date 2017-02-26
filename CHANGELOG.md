@@ -1,5 +1,8 @@
 ==Changelog==
 
+= 1.1.1 =
+* Show more detailed error message during Bulk Tagging failure
+
 = 1.1.0 =
 * FEATURE: A bulk tagger tags existing images in library
 * FEATURE: Under the hood, sends URL to image assets instead of uploading images individually
