@@ -3,7 +3,7 @@ Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Tested up to: 4.7
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 4. Filter media items by a specific tag when using the list view of the media library
 
 == Changelog ==
+
+= 1.1.1 =
+* Show more detailed error message during Bulk Tagging failure
 
 = 1.1.0 =
 * FEATURE: A bulk tagger tags existing images in library
