@@ -25,6 +25,24 @@ class Tagger_Service {
 	}
 
 	/**
+	 * Tag a single uploaded image
+	 *
+	 * @param  string $image_path_or_url Image path or ID
+	 * @param  int    $post_id              WP Post ID
+	 *
+	 * @return array                     Tags added to the image
+	 */
+	public function tag_single_image( $image_path_or_url, $post_id ) {
+		$tags = $this->api->get_tags_for_image( $image_path_or_url, $post_id );
+
+		if ( ! $tags ) {
+			return $post_id;
+		}
+
+		return $this->store_tag_info( $tags );
+	}
+
+	/**
 	 * Persist Clarifai tag data
 	 *
 	 * @param  array $resultset 	Clarifai Tag result set
@@ -34,9 +52,7 @@ class Tagger_Service {
 		$post_id = (int) $resultset['local_id'];
 		$tags = $resultset['result']['tag']['classes'];
 
-		// Store the terms as tags
-		// TODO: Delegate to a TagStorage interface.
-		wp_set_object_terms( $post_id, $tags, TMT_TAG_SLUG );
+		wp_set_object_terms( $post_id, $tags, tmt_get_tag_taxonomy() );
 
 		$this->preserve_tag_resultset( $post_id, $resultset );
 
@@ -50,7 +66,6 @@ class Tagger_Service {
 	 * @param array $resultset Resultset
 	 */
 	public function preserve_tag_resultset( $post_id, $resultset ) {
-		// Store tag data along with the image.
 		update_post_meta( $post_id, TMT_POST_META_KEY, $resultset );
 	}
 }

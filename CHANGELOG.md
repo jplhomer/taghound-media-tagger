@@ -1,5 +1,8 @@
 ==Changelog==
 
+= 1.2.0 =
+* FEATURE: Adds the `tmt_tag_taxonomy` filter to allow users to customize the taxonomy used to store tags
+
 = 1.1.1 =
 * Show more detailed error message during Bulk Tagging failure
 

@@ -1,32 +1,28 @@
 <?php
 /**
- * Class TagTest
+ * Class TaggerServiceTest
  *
  * @package
  */
 
+use Taghound_Media_Tagger\Tagger_Service;
+
 /**
- * Test Tags
+ * Test the Tagger Service
  */
-class TagTest extends WP_UnitTestCase {
+class TaggerServiceTest extends WP_UnitTestCase {
 	private $api = null;
-	private $TMT = null;
+	private $tagger = null;
 	private $attachment_image = null;
 	private $tag_data = array();
 
 	function setUp() {
-		$this->TMT = Taghound_Media_Tagger\Taghound_Media_Tagger::instance();
-
 		// NOTE: Attachment factories with uploads weren't introduced until 4.5
 		// Create a demo image attachment
 		if ( is_object( $this->factory ) ) {
 			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		} else {
-			$post_data = array(
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image/jpeg',
-			);
-			$post_id = wp_insert_post( $post_data );
+			$post_id = Attachment_Helper::create_image_attachment( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		}
 		$this->attachment_image = get_post( $post_id );
 
@@ -36,10 +32,17 @@ class TagTest extends WP_UnitTestCase {
 						  ->setMethods( array( 'get_tags_for_image' ) )
 						  ->getMock();
 
+		$this->tagger = new Tagger_Service( $this->api );
+
 		// Mock tag data
 	    $this->tag_data = array(
-			'doc_id' => 1234,
-			'tags' => array( 'apple', 'banana', 'pear' ),
+			'docid' => 1234,
+			'local_id' => $post_id,
+			'result' => array(
+				'tag' => array(
+					'classes' => array('apple', 'banana', 'pear'),
+				),
+			),
 		);
 	}
 
@@ -51,8 +54,11 @@ class TagTest extends WP_UnitTestCase {
 				  ->method( 'get_tags_for_image' )
 				  ->will( $this->returnValue( $this->tag_data ) );
 
-	  	// Get mock tags for the image
-	    $this->TMT->handle_add_attachment( $this->attachment_image->ID, $this->api );
+		// Get mock tags for the image
+		$this->tagger->tag_single_image(
+			tmt_get_image_path_or_url( $this->attachment_image->ID ),
+			$this->attachment_image->ID
+		);
 
 		// Get the names of the terms associated with this attachment
 		$terms = wp_get_object_terms( $this->attachment_image->ID, TMT_TAG_SLUG );
@@ -63,20 +69,7 @@ class TagTest extends WP_UnitTestCase {
 			return $term->name;
 		}, $terms);
 
-		$this->assertEquals( $this->tag_data['tags'], $term_names );
-	}
-
-	/**
-	 * Make sure our upload only utility function works
-	 */
-	function test_upload_only_function_works() {
-		$option_name = TMT_SETTING_PREFIX . 'upload_only';
-
-		update_option( $option_name, '' );
-		$this->assertFalse( tmt_is_upload_only() );
-
-		update_option( $option_name, 'on' );
-		$this->assertTrue( tmt_is_upload_only() );
+		$this->assertEquals( $this->tag_data['result']['tag']['classes'], $term_names );
 	}
 
 	function tearDown() {

@@ -5,29 +5,25 @@
  * @package
  */
 
+use Taghound_Media_Tagger\Tagger_Service;
+
 /**
  * Test Attachments
  */
 class AttachmentTest extends WP_UnitTestCase {
 	private $api = null;
-	private $TMT = null;
+	private $tagger = null;
 	private $attachment_image = null;
 	private $attachment_pdf = null;
 	private $tag_data = array();
 
 	function setUp() {
-		$this->TMT = Taghound_Media_Tagger\Taghound_Media_Tagger::instance();
-
 		// NOTE: Attachment factories with uploads weren't introduced until 4.5
 		// Create a demo image attachment
 		if ( is_object( $this->factory ) ) {
 			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		} else {
-			$post_data = array(
-				'post_type' => 'attachment',
-				'post_mime_type' => 'image/jpeg',
-			);
-			$post_id = wp_insert_post( $post_data );
+			$post_id = Attachment_Helper::create_image_attachment( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		}
 		$this->attachment_image = get_post( $post_id );
 
@@ -49,22 +45,18 @@ class AttachmentTest extends WP_UnitTestCase {
 						  ->setMethods( array( 'get_tags_for_image' ) )
 						  ->getMock();
 
+		$this->tagger = new Tagger_Service( $this->api );
+
 		// Mock tag data
-	    $this->tag_data = array(
-			'doc_id' => 1234,
-			'tags' => array( 'apple', 'banana', 'pear' ),
+		$this->tag_data = array(
+			'docid' => 1234,
+			'local_id' => $this->attachment_image->ID,
+			'result' => array(
+				'tag' => array(
+					'classes' => array('apple', 'banana', 'pear'),
+				),
+			),
 		);
-	}
-
-	/**
-	 * Make sure Image attachments are marked as valid
-	 */
-	function test_image_attachments_are_valid() {
-		// Test that a JPEG is valid
-		$this->assertTrue( $this->TMT->validate_attachment_for_tagging( $this->attachment_image->ID ) );
-
-		// Test that a PDF is invalid
-		$this->assertFalse( $this->TMT->validate_attachment_for_tagging( $this->attachment_pdf->ID ) );
 	}
 
 	/**
@@ -76,7 +68,7 @@ class AttachmentTest extends WP_UnitTestCase {
 				  ->will( $this->returnValue( $this->tag_data ) );
 
 		// Get mock tags for the image
-	    $this->TMT->handle_add_attachment( $this->attachment_image->ID, $this->api );
+	    $this->tagger->tag_single_image( tmt_get_image_path_or_url($this->attachment_image->ID), $this->attachment_image->ID );
 
 		$this->assertEquals( $this->tag_data, get_post_meta( $this->attachment_image->ID, TMT_POST_META_KEY, true ) );
 	}
