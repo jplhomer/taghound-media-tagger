@@ -14,8 +14,6 @@
 
 namespace Taghound_Media_Tagger;
 
-use Taghound_Media_Tagger\Clarifai\API\Client;
-
 /**
  * InitializE plugin class
  */
@@ -164,35 +162,15 @@ class Taghound_Media_Tagger {
 	 * Handle the wordpress add_attachment filter
 	 *
 	 * @param int    $post_id  WP Post ID for attachment
-	 * @param Client $cf    (optional) Pass in the API class. Used only for testing.
 	 */
-	public function handle_add_attachment( $post_id, Client $cf = null ) {
+	public function handle_add_attachment( $post_id ) {
 		if ( ! $this->validate_attachment_for_tagging( $post_id ) ) {
 			return $post_id;
 		}
 
-		if ( tmt_is_upload_only() ) {
-			$image_path_or_url = get_attached_file( $post_id );
-		} else {
-			$attachment = wp_get_attachment_image_src( $post_id, 'large' );
-			$image_path_or_url = $attachment[0];
-		}
-
-		if ( is_null( $cf ) ) {
-			$cf = tmt_get_cf_client();
-		}
-
-		$tags = $cf->get_tags_for_image( $image_path_or_url );
-
-		if ( ! $tags ) {
-			return $post_id;
-		}
-
-		// Store the terms as tags.
-		wp_set_object_terms( $post_id, $tags['tags'], TMT_TAG_SLUG );
-
-		// Store tag data along with the image.
-		update_post_meta( $post_id, TMT_POST_META_KEY, $tags );
+		$image_path_or_url = tmt_get_image_path_or_url( $post_id );
+		$tagger = new Tagger_Service( tmt_get_cf_client() );
+		$tagger->tag_single_image($image_path_or_url, $post_id);
 
 		return $post_id;
 	}
@@ -288,7 +266,7 @@ class Taghound_Media_Tagger {
 	 * @param  int $post_id WP Post ID
 	 * @return bool
 	 */
-	public static function validate_attachment_for_tagging( $post_id ) {
+	public function validate_attachment_for_tagging( $post_id ) {
 		$attachment = get_post( $post_id );
 		$valid_images = new Valid_Image_Specification;
 

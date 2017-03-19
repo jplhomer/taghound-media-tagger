@@ -137,7 +137,7 @@ class Client {
 	 * @param  string $image_path_or_url File path or URL to image
 	 * @return array              Array ( tags => array, doc_id => int )
 	 */
-	public function get_tags_for_image( $image_path_or_url ) {
+	public function get_tags_for_image( $image_path_or_url, $post_id ) {
 		$args = array(
 			'endpoint' => 'tag',
 		);
@@ -145,23 +145,19 @@ class Client {
 		if ( tmt_is_upload_only() ) {
 			$args['post'] = array(
 				'encoded_data' => new \CURLFile( $image_path_or_url ),
+				'local_id' => $post_id,
 			);
 		} else {
 			$args['post'] = array(
 				'url' => $image_path_or_url,
+				'local_id' => $post_id,
 			);
 		}
 
 		try {
 			$results = $this->_make_request( $args );
 
-			$tags = $results['results'][0]['result']['tag']['classes'];
-			$doc_id = $results['results'][0]['docid'];
-
-			return array(
-				'tags' => $tags,
-				'doc_id' => $doc_id,
-			);
+			return $results['results'][0];
 		} catch ( \Exception $e ) {
 			return $e;
 		}

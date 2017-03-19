@@ -55,3 +55,21 @@ function tmt_get_cf_client() {
 		'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
 	));
 }
+
+/**
+ * Returns the image path or URL based on the upload_only setting
+ *
+ * @param  int $post_id    WP Post ID
+ *
+ * @return string
+ */
+function tmt_get_image_path_or_url($post_id) {
+	if ( tmt_is_upload_only() ) {
+		$image_path_or_url = get_attached_file( $post_id );
+	} else {
+		$attachment = wp_get_attachment_image_src( $post_id, 'large' );
+		$image_path_or_url = $attachment[0];
+	}
+
+	return $image_path_or_url;
+}
