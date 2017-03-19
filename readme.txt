@@ -24,7 +24,7 @@ Typically, your images will be tagged with simple indicators like:
 
 Taghound Media Tagger takes these predictions and turns them into WordPress tags. This enables you to immediately search for images you've added to your media library by the contents of the image and not by the title or description you have manually entered.
 
-Currently Taghound Media Tagger will only tag images you add **after** installing the plugin. *Note that we plan to offer support for backdating your media library. See the Coming Soon section below.*
+Taghound Media Tagger lets you tag new images in addition to a backlog of older images you added before installing the plugin!
 
 = Features =
 
@@ -73,7 +73,7 @@ A. Taghound Media Tagger sends each of your images over HTTPS to Clarifai after 
 A. Clarifai processes your images and returns a list of associated keywords. Additionally, Clarifai stores images to further train its models and increase the accuracy of future responses. [Clarifai does not share your images with third parties](https://www.reddit.com/r/clarifai/comments/4aqhmr/question_about_the_api_does_it_take_long_because/d13fnz5).
 
 = Q. Does this plugin process images that already exist in my media library? =
-A. Not yet, but soon! We hope to push backdating capabilities as an update.
+A. Yes! Visit the **Settings > Taghound** page and use the Bulk Tagger tool.
 
 = Q. What if an image gets tagged with something I don't like? =
 A. Simply untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
