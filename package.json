@@ -5,7 +5,7 @@
   "main": "Gruntfile.js",
   "author": "Joshua P. Larson <jplhomer@gmail.com>",
   "scripts": {
-    "test": "phpunit && phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')"
+    "test": "phpunit && phpcbf --standard=phpcs.ruleset.xml $(find . -name '*.php') && phpcs --standard=phpcs.ruleset.xml $(find . -name '*.php')"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

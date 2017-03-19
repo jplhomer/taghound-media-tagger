@@ -28,7 +28,7 @@ class Tagger_Service {
 	 * Tag a single uploaded image
 	 *
 	 * @param  string $image_path_or_url Image path or ID
-	 * @param  int $post_id              WP Post ID
+	 * @param  int    $post_id              WP Post ID
 	 *
 	 * @return array                     Tags added to the image
 	 */

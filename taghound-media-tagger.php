@@ -161,7 +161,7 @@ class Taghound_Media_Tagger {
 	/**
 	 * Handle the wordpress add_attachment filter
 	 *
-	 * @param int    $post_id  WP Post ID for attachment
+	 * @param int $post_id  WP Post ID for attachment
 	 */
 	public function handle_add_attachment( $post_id ) {
 		if ( ! $this->validate_attachment_for_tagging( $post_id ) ) {
@@ -170,7 +170,7 @@ class Taghound_Media_Tagger {
 
 		$image_path_or_url = tmt_get_image_path_or_url( $post_id );
 		$tagger = new Tagger_Service( tmt_get_cf_client() );
-		$tagger->tag_single_image($image_path_or_url, $post_id);
+		$tagger->tag_single_image( $image_path_or_url, $post_id );
 
 		return $post_id;
 	}

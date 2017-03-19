@@ -63,7 +63,7 @@ function tmt_get_cf_client() {
  *
  * @return string
  */
-function tmt_get_image_path_or_url($post_id) {
+function tmt_get_image_path_or_url( $post_id ) {
 	if ( tmt_is_upload_only() ) {
 		$image_path_or_url = get_attached_file( $post_id );
 	} else {
@@ -80,5 +80,5 @@ function tmt_get_image_path_or_url($post_id) {
  * @return string
  */
 function tmt_get_tag_taxonomy() {
-	return apply_filters('tmt_tag_taxonomy', TMT_TAG_SLUG);
+	return apply_filters( 'tmt_tag_taxonomy', TMT_TAG_SLUG );
 }

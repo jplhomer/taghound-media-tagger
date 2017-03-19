@@ -135,7 +135,8 @@ class Client {
 	 * Get tags for an image
 	 *
 	 * @param  string $image_path_or_url File path or URL to image
-	 * @return array              Array ( tags => array, doc_id => int )
+	 * @param  int	  $post_id			 WP Post ID
+	 * @return array              		 Array ( tags => array, doc_id => int )
 	 */
 	public function get_tags_for_image( $image_path_or_url, $post_id ) {
 		$args = array(
