@@ -33,28 +33,24 @@ class TaghoundFunctionsTest extends WP_UnitTestCase {
 		$new_tax = 'my_dummy_taxonomy';
 
 		// Override TMT's default slug
-		add_filter( 'tmt_tag_taxonomy', function($slug) use ($new_tax) {
-			return $new_tax;
-		});
+		add_filter( 'tmt_tag_taxonomy', array( $this, 'taxonomy_override' ) );
 
 		$this->assertEquals($new_tax, tmt_get_tag_taxonomy());
 
-		remove_filter( 'tmt_tag_taxonomy', function($slug) use ($new_tax) {
-			return $new_tax;
-		});
+		remove_filter( 'tmt_tag_taxonomy', array( $this, 'taxonomy_override' ) );
 	}
 
 	public function test_know_when_alternate_taxonomy_used() {
 		$this->assertFalse(tmt_using_alternate_taxonomy());
 
-		add_filter( 'tmt_tag_taxonomy', function($slug) {
-			return 'lolololol';
-		});
+		add_filter( 'tmt_tag_taxonomy', array( $this, 'taxonomy_override' ) );
 
 		$this->assertTrue(tmt_using_alternate_taxonomy());
 
-		remove_filter( 'tmt_tag_taxonomy', function($slug) {
-			return 'lolololol';
-		});
+		remove_filter( 'tmt_tag_taxonomy', array( $this, 'taxonomy_override' ) );
+	}
+
+	public function taxonomy_override($slug) {
+		return 'my_dummy_taxonomy';
 	}
 }
