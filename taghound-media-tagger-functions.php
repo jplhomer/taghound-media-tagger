@@ -82,3 +82,12 @@ function tmt_get_image_path_or_url( $post_id ) {
 function tmt_get_tag_taxonomy() {
 	return apply_filters( 'tmt_tag_taxonomy', TMT_TAG_SLUG );
 }
+
+/**
+ * Check if the user is using an alternate taxonomy
+ *
+ * @return bool
+ */
+function tmt_using_alternate_taxonomy() {
+	return tmt_get_tag_taxonomy() != TMT_TAG_SLUG;
+}

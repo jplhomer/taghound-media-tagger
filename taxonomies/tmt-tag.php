@@ -9,7 +9,7 @@ function tmt_tag_init() {
 		'hierarchical'      => false,
 		'public'            => true,
 		'show_in_nav_menus' => false,
-		'show_ui'           => true,
+		'show_ui'           => ! tmt_using_alternate_taxonomy(),
 		'show_admin_column' => true,
 		'query_var'         => true,
 		'rewrite'           => true,

@@ -127,6 +127,11 @@ class Taghound_Media_Tagger {
 			return $form_fields;
 		}
 
+		// Only show if the user hasn't set a custom taxonomy.
+		if ( tmt_using_alternate_taxonomy() ) {
+			return $form_fields;
+		}
+
 		// Prepare arguments for the post categories meta box.
 		$args = array(
 			'args' => array(
@@ -182,6 +187,11 @@ class Taghound_Media_Tagger {
 	 * @return array         Modified query
 	 */
 	function handle_attachment_search( $query ) {
+		// Do not intercept search if using custom taxonomy.
+		if ( tmt_using_alternate_taxonomy() ) {
+			return $query;
+		}
+
 		if ( ! empty( $query['s'] ) ) {
 			// Get tag terms matching the search.
 			$term_results = get_terms( array(
