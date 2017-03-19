@@ -79,7 +79,7 @@ A. Yes! Visit the **Settings > Taghound** page and use the Bulk Tagger tool.
 A. Simply untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
 
 = Q. Can I use this plugin with other 3rd party plugins like Media Library Assistant? =
-A. Yes! We've provided a hook for you to choose where to store the tags. Simply pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy`:
+A. Yes! We've provided a hook for you to choose where to store the tags. Simply pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy` inside your theme's **functions.php** file:
 
 ```
 function custom_tag_taxonomy( $slug ) {
