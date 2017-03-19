@@ -72,17 +72,6 @@ class TaggerServiceTest extends WP_UnitTestCase {
 		$this->assertEquals( $this->tag_data['result']['tag']['classes'], $term_names );
 	}
 
-	public function test_tags_can_use_alternate_taxonomy() {
-		$new_tax = 'my_dummy_taxonomy';
-
-		// Override TMT's default slug
-		add_filter( 'tmt_tag_taxonomy', function($slug) use ($new_tax) {
-			return $new_tax;
-		});
-
-		$this->assertEquals($new_tax, $this->tagger->get_tag_taxonomy());
-	}
-
 	function tearDown() {
 		Attachment_Helper::delete_all_attachments();
 	}

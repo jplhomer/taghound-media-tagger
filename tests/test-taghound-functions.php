@@ -28,4 +28,15 @@ class TaghoundFunctionsTest extends WP_UnitTestCase {
 
 		$this->assertFalse(!!stristr($result, 'http'), "{$result} should not be a public URL");
 	}
+
+	public function test_tags_can_use_alternate_taxonomy() {
+		$new_tax = 'my_dummy_taxonomy';
+
+		// Override TMT's default slug
+		add_filter( 'tmt_tag_taxonomy', function($slug) use ($new_tax) {
+			return $new_tax;
+		});
+
+		$this->assertEquals($new_tax, tmt_get_tag_taxonomy());
+	}
 }

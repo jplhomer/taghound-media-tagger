@@ -73,3 +73,12 @@ function tmt_get_image_path_or_url($post_id) {
 
 	return $image_path_or_url;
 }
+
+/**
+ * Get the tag taxonomy
+ *
+ * @return string
+ */
+function tmt_get_tag_taxonomy() {
+	return apply_filters('tmt_tag_taxonomy', TMT_TAG_SLUG);
+}
