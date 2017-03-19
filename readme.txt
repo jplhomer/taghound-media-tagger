@@ -78,6 +78,23 @@ A. Not yet, but soon! We hope to push backdating capabilities as an update.
 = Q. What if an image gets tagged with something I don't like? =
 A. Simply untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
 
+= Q. Can I use this plugin with other 3rd party plugins like Media Library Assistant? =
+A. Yes! We've provided a hook for you to choose where to store the tags. Simply pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy`:
+
+```
+function custom_tag_taxonomy( $slug ) {
+	return 'YOUR_CUSTOM_SLUG';
+}
+add_filter( 'tmt_tag_taxonomy', 'custom_tag_taxonomy', 10, 1 );
+```
+
+We've also tested this with a couple popular media management plugins:
+
+* [Media Library Assistant](https://wordpress.org/plugins-wp/media-library-assistant/) uses the `attachment_tag` slug
+* [Enhanced Media Library](https://wordpress.org/plugins-wp/enhanced-media-library/) uses the `media_category` slug
+
+Note that the default user interface for Taghound's tag manipulation will be hidden when you've chosen an alternate tag taxonomy.
+
 == Screenshots ==
 
 1. Tags are automatically applied to images when added to the media library
@@ -110,4 +127,3 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 = 1.0.0 =
 * Taghound Media Tagger.
-
