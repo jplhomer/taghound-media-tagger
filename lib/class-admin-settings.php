@@ -256,6 +256,18 @@ class Settings {
 	}
 
 	/**
+	 * Print alternate taxonomy warning
+	 *
+	 * @return void
+	 */
+	public function print_alternate_taxonomy_notice() {
+		if ( tmt_using_alternate_taxonomy() ) {
+			echo '<p><strong style="color: red;">Note: Your theme is using an alternate taxonomy: <code>' . tmt_get_tag_taxonomy() . '</code></strong>.';
+			echo "<br>Taghound's default taxonomy user interface and search has been disabled for media items.</p>";
+		}
+	}
+
+	/**
 	 * Print instructions for getting an API key from Clarifai.
 	 *
 	 * @return void
@@ -270,6 +282,7 @@ class Settings {
 	 * @return void
 	 */
 	public function section_content_actions() {
+		$this->print_alternate_taxonomy_notice();
 		if ( tmt_can_be_enabled() ) {
 			$this->print_usage_data();
 			$this->print_bulk_tagger();
