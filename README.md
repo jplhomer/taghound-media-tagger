@@ -3,7 +3,7 @@
 **Tags:** media gallery, tagging, images, deep learning, neural network, admin  
 **Requires at least:** 3.9  
 **Tested up to:** 4.7  
-**Stable tag:** 1.1.1  
+**Stable tag:** 1.2.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -24,7 +24,7 @@ Typically, your images will be tagged with simple indicators like:
 
 Taghound Media Tagger takes these predictions and turns them into WordPress tags. This enables you to immediately search for images you've added to your media library by the contents of the image and not by the title or description you have manually entered.
 
-Currently Taghound Media Tagger will only tag images you add **after** installing the plugin. *Note that we plan to offer support for backdating your media library. See the Coming Soon section below.*
+Taghound Media Tagger lets you tag new images in addition to a backlog of older images you added before installing the plugin!
 
 ### Features ###
 
@@ -73,10 +73,22 @@ A. Taghound Media Tagger sends each of your images over HTTPS to Clarifai after 
 A. Clarifai processes your images and returns a list of associated keywords. Additionally, Clarifai stores images to further train its models and increase the accuracy of future responses. [Clarifai does not share your images with third parties](https://www.reddit.com/r/clarifai/comments/4aqhmr/question_about_the_api_does_it_take_long_because/d13fnz5).
 
 ### Q. Does this plugin process images that already exist in my media library? ###
-A. Not yet, but soon! We hope to push backdating capabilities as an update.
+A. Yes! Visit the **Settings > Taghound** page and use the Bulk Tagger tool.
 
 ### Q. What if an image gets tagged with something I don't like? ###
 A. Simply untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
+
+### Q. Can I use this plugin with other 3rd party plugins like Media Library Assistant? ###
+A. Yes! We've provided a hook for you to choose where to store the tags. Simply pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy` inside your theme's **functions.php** file.
+
+**[See the documentation here](https://gist.github.com/jplhomer/05a6033e544c16cf335f2b163ff33069).**
+
+We've also tested this with a couple popular media management plugins:
+
+* [Media Library Assistant](https://wordpress.org/plugins-wp/media-library-assistant/) uses the `attachment_tag` slug
+* [Enhanced Media Library](https://wordpress.org/plugins-wp/enhanced-media-library/) uses the `media_category` slug
+
+Note that the default user interface for Taghound's tag manipulation will be hidden when you've chosen an alternate tag taxonomy.
 
 ## Screenshots ##
 
@@ -94,6 +106,9 @@ A. Simply untag the image by clicking the 'X'. This is similar to how you would 
 
 
 ## Changelog ##
+
+### 1.2.0 ###
+* FEATURE: Adds the `tmt_tag_taxonomy` filter to allow users to customize the taxonomy used to store tags
 
 ### 1.1.1 ###
 * Show more detailed error message during Bulk Tagging failure
