@@ -22,7 +22,7 @@ class TaggerServiceTest extends WP_UnitTestCase {
 		if ( is_object( $this->factory ) ) {
 			$post_id = $this->factory->attachment->create_upload_object( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		} else {
-			$post_id = Attachment_Helper::create_upload_object( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
+			$post_id = Attachment_Helper::create_image_attachment( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
 		}
 		$this->attachment_image = get_post( $post_id );
 
