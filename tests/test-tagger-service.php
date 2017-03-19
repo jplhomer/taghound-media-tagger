@@ -50,7 +50,15 @@ class TaggerServiceTest extends WP_UnitTestCase {
 	 * Make sure Tags are added to an attachment
 	 */
 	function test_tags_are_added_to_attachment() {
-		$this->trigger_get_tags();
+		$this->api->expects( $this->any() )
+				  ->method( 'get_tags_for_image' )
+				  ->will( $this->returnValue( $this->tag_data ) );
+
+		// Get mock tags for the image
+		$this->tagger->tag_single_image(
+			tmt_get_image_path_or_url( $this->attachment_image->ID ),
+			$this->attachment_image->ID
+		);
 
 		// Get the names of the terms associated with this attachment
 		$terms = wp_get_object_terms( $this->attachment_image->ID, TMT_TAG_SLUG );
@@ -64,41 +72,15 @@ class TaggerServiceTest extends WP_UnitTestCase {
 		$this->assertEquals( $this->tag_data['result']['tag']['classes'], $term_names );
 	}
 
-	// public function test_tags_can_use_alternate_taxonomy() {
-	// 	$new_tax = 'my_dummy_taxonomy';
-	//
-	// 	// Override TMT's default slug
-	// 	add_filter( 'tmt_tag_taxonomy', $new_tax );
-	//
-	// 	$this->trigger_get_tags();
-	//
-	// 	// Get the names of the terms associated with this attachment
-	// 	$terms = wp_get_object_terms( $this->attachment_image->ID, $new_tax );
-	//
-	// 	$this->assertInternalType( 'array', $terms );
-	//
-	// 	$term_names = array_map( function( $term ) {
-	// 		return $term->name;
-	// 	}, $terms);
-	//
-	// 	$this->assertEquals( $this->tag_data['tags'], $term_names );
-	// }
+	public function test_tags_can_use_alternate_taxonomy() {
+		$new_tax = 'my_dummy_taxonomy';
 
-	/**
-	 * Get and save mocked tags
-	 *
-	 * @return void
-	 */
-	protected function trigger_get_tags() {
-		$this->api->expects( $this->any() )
-				  ->method( 'get_tags_for_image' )
-				  ->will( $this->returnValue( $this->tag_data ) );
+		// Override TMT's default slug
+		add_filter( 'tmt_tag_taxonomy', function($slug) use ($new_tax) {
+			return $new_tax;
+		});
 
-	  	// Get mock tags for the image
-	    $this->tagger->tag_single_image(
-			tmt_get_image_path_or_url( $this->attachment_image->ID ),
-			$this->attachment_image->ID
-		);
+		$this->assertEquals($new_tax, $this->tagger->get_tag_taxonomy());
 	}
 
 	function tearDown() {

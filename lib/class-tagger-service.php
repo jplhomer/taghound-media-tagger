@@ -52,7 +52,7 @@ class Tagger_Service {
 		$post_id = (int) $resultset['local_id'];
 		$tags = $resultset['result']['tag']['classes'];
 
-		wp_set_object_terms( $post_id, $tags, TMT_TAG_SLUG );
+		wp_set_object_terms( $post_id, $tags, $this->get_tag_taxonomy() );
 
 		$this->preserve_tag_resultset( $post_id, $resultset );
 
@@ -67,5 +67,14 @@ class Tagger_Service {
 	 */
 	public function preserve_tag_resultset( $post_id, $resultset ) {
 		update_post_meta( $post_id, TMT_POST_META_KEY, $resultset );
+	}
+
+	/**
+	 * Get the tag taxonomy slug
+	 *
+	 * @return string
+	 */
+	public function get_tag_taxonomy() {
+		return apply_filters('tmt_tag_taxonomy', TMT_TAG_SLUG);
 	}
 }
