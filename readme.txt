@@ -3,7 +3,7 @@ Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Tested up to: 4.7
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -99,6 +99,9 @@ Note that the default user interface for Taghound's tag manipulation will be hid
 
 == Changelog ==
 
+= 1.2.0 =
+* FEATURE: Adds the `tmt_tag_taxonomy` filter to allow users to customize the taxonomy used to store tags
+
 = 1.1.1 =
 * Show more detailed error message during Bulk Tagging failure
 
@@ -122,3 +125,4 @@ Note that the default user interface for Taghound's tag manipulation will be hid
 
 = 1.0.0 =
 * Taghound Media Tagger.
+

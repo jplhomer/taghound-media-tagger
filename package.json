@@ -1,7 +1,7 @@
 
 {
   "name": "taghound-media-tagger",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "main": "Gruntfile.js",
   "author": "Joshua P. Larson <jplhomer@gmail.com>",
   "scripts": {
