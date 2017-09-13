@@ -41,7 +41,7 @@ class AttachmentTest extends WP_UnitTestCase {
 
 		// Create a mock of the API
 		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
-						  ->setConstructorArgs( array( array( 'client_id' => 'nota', 'client_secret' => 'secret' ) ) )
+						  ->setConstructorArgs( ['my_api_key'] )
 						  ->setMethods( array( 'get_tags_for_image' ) )
 						  ->getMock();
 
