@@ -8,15 +8,7 @@ use Taghound_Media_Tagger\Clarifai\Api\Client;
  * @return bool
  */
 function tmt_can_be_enabled() {
-	$can_be_enabled = false;
-	$client_id = get_option( TMT_SETTING_PREFIX . 'client_id' );
-	$client_secret = get_option( TMT_SETTING_PREFIX . 'client_secret' );
-
-	if ( ! empty( $client_id ) && ! empty( $client_secret ) ) {
-		$can_be_enabled = true;
-	}
-
-	return $can_be_enabled;
+	return ! empty( get_option( TMT_SETTING_PREFIX . 'api_key' ) );
 }
 
 /**
@@ -50,10 +42,7 @@ function tmt_is_upload_only() {
  * @return Client  Clarifai API client
  */
 function tmt_get_cf_client() {
-	return new Client( array(
-		'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
-		'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
-	));
+	return new Client( get_option( TMT_SETTING_PREFIX . 'api_key' ) );
 }
 
 /**

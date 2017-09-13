@@ -42,12 +42,12 @@ class Taghound_Media_Tagger {
 	 */
 	public function __construct() {
 		if ( version_compare( PHP_VERSION, '5.5', '<' ) ) {
-		    add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>" . __( 'Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger' ) . "</p></div>';" ) );
-		    return;
+			add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>" . __( 'Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger' ) . "</p></div>';" ) );
+			return;
 		}
 
 		define( 'TMT_SETTING_PREFIX', 'tmt_' );
-		define( 'TMT_TOKEN_SETTING', TMT_SETTING_PREFIX . 'clarifai_token' );
+		define( 'TMT_API_KEY_SETTING', TMT_SETTING_PREFIX . 'clarifai_api_key' );
 		define( 'TMT_POST_META_KEY', TMT_SETTING_PREFIX . 'clarifai_data' );
 		define( 'TMT_TAG_SLUG', 'tmt_tag' );
 

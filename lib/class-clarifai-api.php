@@ -10,7 +10,7 @@ class Client {
 	 *
 	 * @var string
 	 */
-	protected $api_version = 'v1';
+	protected $api_version = 'v2';
 
 	/**
 	 * Base API URL
@@ -20,96 +20,19 @@ class Client {
 	protected $api_base_url = 'https://api.clarifai.com';
 
 	/**
-	 * Client ID
+	 * API Key
 	 *
 	 * @var string
 	 */
-	protected $client_id = '';
-
-	/**
-	 * Client Secret
-	 *
-	 * @var string
-	 */
-	protected $client_secret = '';
+	protected $api_key = '';
 
 	/**
 	 * Construct the API
 	 *
-	 * @param array $options Options
-	 * @throws \Exception 	If missing options.
+	 * @param string $api_key API Key
 	 */
-	public function __construct( $options ) {
-		if ( empty( $options['client_id'] ) || empty( $options['client_secret'] ) ) {
-			throw new \Exception( 'Please provide a client_id and client_secret' );
-		}
-
-		$this->client_id = $options['client_id'];
-		$this->client_secret = $options['client_secret'];
-	}
-
-	/**
-	 * Determines if a token object is expired using a custom value we calculate
-	 *
-	 * @param  array $token  Token with 'expiration_date'
-	 * @return boolean
-	 */
-	protected function is_token_expired( $token ) {
-		return time() > $token['expiration_date'];
-	}
-
-	/**
-	 * Gets the API keys set on the object
-	 *
-	 * @return array
-	 */
-	protected function get_api_keys() {
-		return array(
-			'client_id' => $this->client_id,
-			'client_secret' => $this->client_secret,
-		);
-	}
-
-	/**
-	 * Gets the auth token. Generates ones if it's invalid or expired.
-	 *
-	 * @return array Token object
-	 */
-	protected function get_auth_token() {
-		$token = get_option( TMT_TOKEN_SETTING );
-
-		if ( ! $token || empty( $token['access_token'] ) || $this->is_token_expired( $token ) ) {
-			return $this->renew_auth_token();
-		}
-
-		return $token;
-	}
-
-	/**
-	 * Get a new auth token
-	 *
-	 * @return array Auth token array
-	 */
-	protected function renew_auth_token() {
-		$keys = $this->get_api_keys();
-
-		$args = array(
-			'endpoint' => 'token',
-			'post' => array(
-				'client_id' => $keys['client_id'],
-			    'client_secret' => $keys['client_secret'],
-			    'grant_type' => 'client_credentials',
-			),
-		);
-
-		$results = $this->_make_request( $args, true );
-
-		// Calculate the expiration date of this token.
-		$results['expiration_date'] = time() + $results['expires_in'];
-
-		update_option( TMT_TOKEN_SETTING, $results );
-
-		return $results;
+	public function __construct( $api_key ) {
+		$this->api_key = $api_key;
 	}
 
 	/**
@@ -223,10 +146,9 @@ class Client {
 		$is_post = ! empty( $args['post'] );
 
 		if ( ! $authenticating ) {
-			$token = $this->get_auth_token();
 			$args = wp_parse_args( $args, array(
 				'headers' => array(
-					"Authorization: Bearer {$token['access_token']}",
+					"Authorization: {$this->api_key}",
 				),
 			));
 		}

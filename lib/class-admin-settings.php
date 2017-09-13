@@ -59,13 +59,8 @@ class Settings {
 				'title' => 'Taghound Media Tagger Settings',
 				'fields' => array(
 					array(
-						'name'  => 'client_id',
-						'title' => 'Clarifai Client ID',
-						'type'  => 'text',
-					),
-					array(
-						'name'  => 'client_secret',
-						'title' => 'Clarifai Client Secret',
+						'name'  => 'api_key',
+						'title' => 'Clarifai API Key',
 						'type'  => 'text',
 					),
 					array(
@@ -273,7 +268,7 @@ class Settings {
 	 * @return void
 	 */
 	public function section_content_main() {
-		echo '<p>Enter your Clarifai Client ID and Client Secret. Get them by <a href="http://developer.clarifai.com" target="_blank">creating a free Clarifai account here &raquo;</a>';
+		echo '<p>Enter your Clarifai API Key. Generate one by <a href="http://developer.clarifai.com" target="_blank">creating a free Clarifai account here &raquo;</a>';
 	}
 
 	/**
