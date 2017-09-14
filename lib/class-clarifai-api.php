@@ -36,25 +36,6 @@ class Client {
 	}
 
 	/**
-	 * Get info about max batch size, etc from the info endpoint
-	 *
-	 * @return array  Info set from Clarifai
-	 */
-	public function get_info() {
-		$args = array(
-			'endpoint' => 'info',
-		);
-
-		try {
-			$results = $this->_make_request( $args );
-
-			return $results['results'];
-		} catch ( \Exception $e ) {
-			return $e;
-		}
-	}
-
-	/**
 	 * Get tags for an image
 	 *
 	 * @param  string $image_path_or_url File path or URL to image
