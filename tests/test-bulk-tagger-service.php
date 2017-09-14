@@ -36,24 +36,8 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		// Create a mock of the API
 		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
 						  ->setConstructorArgs( ['my_api_key'] )
-						  ->setMethods( array( 'get_info', 'get_tags_for_images' ) )
+						  ->setMethods( array( 'get_tags_for_images' ) )
 						  ->getMock();
-
-		// Stub Clarifai response info
-	    $this->response_info = array(
-			'max_image_size' => 100000,
-			'default_language' => 'en',
-			'max_video_size' => 100000,
-			'max_image_bytes' => 10485760,
-			'min_image_size' => 1,
-			'default_model' => 'general-v1.3',
-			'max_video_bytes' => 104857600,
-			'max_video_duration' => 1800,
-			'max_batch_size' => 25,
-			'max_video_batch_size' => 1,
-			'min_video_size' => 1,
-			'api_version' => 0.1,
-		);
 
 		$resultset = array(
 			'docid' => 15512461224882631443,
@@ -85,7 +69,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 			'results' => array(),
 		);
 
-		for ( $i = 0; $i < $this->response_info['max_batch_size']; $i++ ) {
+		for ( $i = 0; $i < 25; $i++ ) {
 			$set = $resultset;
 			$set['local_id'] = "${post_ids[$i]}";
 
@@ -99,9 +83,9 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 	}
 
 	function test_untagged_images() {
-		$images = Bulk_Tagger_Service::untagged_images( array( 'posts_per_page' => $this->response_info['max_batch_size'] ) );
+		$images = Bulk_Tagger_Service::untagged_images( array( 'posts_per_page' => 25 ) );
 
-		$this->assertCount( $this->response_info['max_batch_size'], $images, 'Posts per page argument should be respected' );
+		$this->assertCount( 25, $images, 'Posts per page argument should be respected' );
 	}
 
 	function test_untagged_images_count() {
@@ -109,10 +93,6 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 	}
 
 	function test_bulk_tagging() {
-		$this->api->expects( $this->any() )
-				  ->method( 'get_info' )
-				  ->will( $this->returnValue( $this->response_info ) );
-
 	    $this->api->expects( $this->any() )
 				  ->method( 'get_tags_for_images' )
 				  ->will( $this->returnValue( $this->response_tags ) );
@@ -121,7 +101,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 
 		$result = $bulk_tagger->init();
 
-		$this->assertEquals( $this->response_info['max_batch_size'] - $this->num_bad_images, $result['tagged'] );
+		$this->assertEquals( 25 - $this->num_bad_images, $result['tagged'] );
 		$this->assertEquals( $this->num_bad_images, count( $result['failed'] ), 'Images with errors should be collected' );
 
 		// Test tags with not OK statuses are marked as failed and reasons given
@@ -143,28 +123,10 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 
 		// Make sure count is updated
 		$this->assertEquals(
-			$this->num_images - $this->response_info['max_batch_size'] + $this->num_bad_images,
+			$this->num_images - 25 + $this->num_bad_images,
 			Bulk_Tagger_Service::untagged_images_count(),
 		 	'Remaining untagged images should be less the max batch size'
 		);
-	}
-
-	function test_rate_limit() {
-		$response_info = $this->response_info;
-
-		$response_info['max_batch_size'] = 0;
-
-		$this->api->expects( $this->any() )
-				  ->method( 'get_info' )
-				  ->will( $this->returnValue( $response_info ) );
-
-		$bulk_tagger = new Bulk_Tagger_Service( $this->api );
-		$this->assertFalse( $bulk_tagger->init() );
-	}
-
-	function test_bulk_tagging_continuation() {
-		// @TODO: Test images that failed are not re-tested in next batch
-		// @TODO: Test continue param with more images than batch size
 	}
 
 	function tearDown() {

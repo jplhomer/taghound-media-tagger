@@ -25,6 +25,13 @@ class Bulk_Tagger_Service {
 	protected $errors = array();
 
 	/**
+	 * This is hardcoded as of Clarifai V2
+	 *
+	 * @var int
+	 */
+	protected $max_batch_size = 128;
+
+	/**
 	 * Construct the bulk service class
 	 *
 	 * @param Client $api Clarifai api client
@@ -49,16 +56,8 @@ class Bulk_Tagger_Service {
 			'skip' => array(),
 		));
 
-		// See what our max batch size is.
-		$info = $this->api->get_info();
-		$max_batch_size = $info['max_batch_size'];
-
-		if ( 0 == $max_batch_size ) {
-			return false;
-		}
-
 		// Get that many images from repository.
-		$images = $this->untagged_images( array( 'posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
+		$images = $this->untagged_images( array( 'posts_per_page' => $this->max_batch_size, 'post__not_in' => $result['skip'] ) );
 		$image_urls = array();
 		foreach ( $images as $image ) {
 			$image_urls[ $image->ID ] = $image->guid;
