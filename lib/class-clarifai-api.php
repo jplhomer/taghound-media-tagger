@@ -115,25 +115,6 @@ class Client {
 	}
 
 	/**
-	 * Get usage data for a user's account
-	 *
-	 * @return Usage object or Exception
-	 */
-	public function get_usage_data() {
-		$args = array(
-			'endpoint' => 'usage',
-		);
-
-		try {
-			$results = $this->_make_request( $args );
-
-			return new Usage( $results );
-		} catch ( \Exception $e ) {
-			return $e;
-		}
-	}
-
-	/**
 	 * Performs the general API request
 	 *
 	 * @param  array   $args           Arguments

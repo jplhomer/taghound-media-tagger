@@ -53,7 +53,6 @@ class Taghound_Media_Tagger {
 
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
-		include 'lib/class-clarifai-api-usage.php';
 		include 'lib/class-valid-image-specification.php';
 		include 'lib/class-tagger-service.php';
 		include 'lib/class-bulk-tagger-service.php';

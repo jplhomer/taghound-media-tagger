@@ -194,35 +194,6 @@ class Settings {
 	}
 
 	/**
-	 * Print usage data on admin page
-	 *
-	 * @return void
-	 */
-	public function print_usage_data() {
-		$cf = tmt_get_cf_client();
-
-		$usage = $cf->get_usage_data();
-
-		echo '<h3>Taghound - Clarifai API Usage</h3>';
-
-		if ( ! is_a( $usage, 'Taghound_Media_Tagger\Clarifai\API\Usage' ) ) {
-			echo 'We had trouble loading your Clarifai API usage. Please try again later.';
-			return;
-		}
-
-		$hourly = $usage->hourly;
-		$monthly = $usage->monthly;
-
-		echo '<p><strong>Hourly</strong></p>';
-		echo "<progress class='tmt-progress' value='{$hourly['consumed']}' max='{$hourly['limit']}'></progress>";
-		echo "<p>{$hourly['consumed']} of {$hourly['limit']} units used";
-		echo '<hr>';
-		echo '<p><strong>Monthly</strong></p>';
-		echo "<progress class='tmt-progress' value='{$monthly['consumed']}' max='{$monthly['limit']}'></progress>";
-		echo "<p>{$monthly['consumed']} of {$monthly['limit']} units used";
-	}
-
-	/**
 	 * Print bulk tagger UI
 	 *
 	 * @return void
@@ -279,7 +250,6 @@ class Settings {
 	public function section_content_actions() {
 		$this->print_alternate_taxonomy_notice();
 		if ( tmt_can_be_enabled() ) {
-			$this->print_usage_data();
 			$this->print_bulk_tagger();
 		}
 	}
