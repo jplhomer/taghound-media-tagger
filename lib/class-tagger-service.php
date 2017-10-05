@@ -49,8 +49,10 @@ class Tagger_Service {
 	 * @return array      			Tags
 	 */
 	public function store_tag_info( $resultset ) {
-		$post_id = (int) $resultset['local_id'];
-		$tags = $resultset['result']['tag']['classes'];
+		$post_id = (int) $resultset->input->id;
+		$tags = array_map(function($concept) {
+			return $concept->name;
+		}, $resultset->data->concepts);
 
 		wp_set_object_terms( $post_id, $tags, tmt_get_tag_taxonomy() );
 

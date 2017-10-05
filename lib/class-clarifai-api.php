@@ -27,6 +27,13 @@ class Client {
 	protected $api_key = '';
 
 	/**
+	 * Use Clarifai's General model for predictions.
+	 *
+	 * @var string
+	 */
+	protected $general_model = 'aaa03c23b3724a16a56b629203edc62c';
+
+	/**
 	 * Construct the API
 	 *
 	 * @param string $api_key API Key
@@ -43,26 +50,29 @@ class Client {
 	 * @return array              		 Array ( tags => array, doc_id => int )
 	 */
 	public function get_tags_for_image( $image_path_or_url, $post_id ) {
-		$args = array(
-			'endpoint' => 'tag',
-		);
-
 		if ( tmt_is_upload_only() ) {
 			$args['post'] = array(
 				'encoded_data' => new \CURLFile( $image_path_or_url ),
-				'local_id' => $post_id,
 			);
 		} else {
-			$args['post'] = array(
-				'url' => $image_path_or_url,
-				'local_id' => $post_id,
+			$data = array(
+				'inputs' => array(
+					array(
+						'data' => array(
+							'image' => array(
+								'url' => $image_path_or_url,
+							),
+						),
+						'id' => $post_id,
+					),
+				),
 			);
 		}
 
 		try {
-			$results = $this->_make_request( $args );
+			$results = $this->_make_request( $data );
 
-			return $results['results'][0];
+			return $results->outputs[0];
 		} catch ( \Exception $e ) {
 			return $e;
 		}
@@ -76,7 +86,7 @@ class Client {
 	 */
 	public function get_tags_for_images( $image_urls ) {
 		$args = array(
-			'endpoint' => 'tag',
+			'endpoint' => 'models',
 		);
 
 		$image_url_string = '';
@@ -98,46 +108,28 @@ class Client {
 	/**
 	 * Performs the general API request
 	 *
-	 * @param  array   $args           Arguments
-	 * @param  boolean $authenticating Whether this is the token exchange request
+	 * @param array $data              Data
 	 *
 	 * @throws \Exception 			   If there was an error.
 	 * @return object                  JSON-decoded response
 	 */
-	protected function _make_request( $args, $authenticating = false ) {
-		$is_post = ! empty( $args['post'] );
+	protected function _make_request( $data ) {
+		$url = implode('/', [
+			$this->api_base_url,
+			$this->api_version,
+			'models',
+			$this->general_model,
+			'outputs',
+		]);
 
-		if ( ! $authenticating ) {
-			$args = wp_parse_args( $args, array(
-				'headers' => array(
-					"Authorization: {$this->api_key}",
-				),
-			));
-		}
+		$response = wp_remote_post( $url, array(
+			'body' => json_encode($data),
+			'headers' => array(
+				'Content-Type' => 'application/json',
+				'Authorization' => "Key {$this->api_key}",
+			),
+		));
 
-		$url = $this->api_base_url . '/' . $this->api_version . '/' . $args['endpoint'] . '/';
-
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-		if ( $is_post ) {
-			curl_setopt( $ch, CURLOPT_POST, 1 );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $args['post'] );
-		}
-
-		if ( ! empty( $args['headers'] ) ) {
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, $args['headers'] );
-		}
-
-		$result = curl_exec( $ch );
-
-		if ( ! $result ) {
-			throw new \Exception( curl_error( $ch ) );
-		}
-
-		curl_close( $ch );
-
-		return json_decode( $result, true );
+		return json_decode( wp_remote_retrieve_body( $response ) );
 	}
 }
