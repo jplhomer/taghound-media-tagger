@@ -62,7 +62,7 @@ class Bulk_Tagger_Service {
 		$results = $tagger->tag_images( $images );
 
 		if ( 'Ok' === $results->status->description ) {
-			$tags = $tagger->process_tag_results( $results->outputs );
+			$tags = $this->process_tag_results( $results->outputs );
 			$result['tagged'] += count( $tags );
 			$result['failed'] = $this->errors;
 
@@ -100,15 +100,6 @@ class Bulk_Tagger_Service {
 		}
 
 		return $tags;
-	}
-
-	/**
-	 * Can bulk tagging happen?
-	 *
-	 * @return boolean
-	 */
-	public static function enabled() {
-		return tmt_can_be_enabled() && ! tmt_is_upload_only();
 	}
 
 	/**
