@@ -4,7 +4,7 @@ Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Requires PHP: 5.4
 Tested up to: 4.7
-Stable tag: 1.2.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,7 +39,6 @@ Taghound Media Tagger lets you tag new images in addition to a backlog of older 
 We're always looking to improve Taghound Media Tagger. Here's what is on the roadmap:
 
 - Tag videos in addition to photos
-- Upgrade to Clarifai's V2 API
 
 = Github =
 This plugin is open-source and available on Github. Please consider contributing to the plugin if you find bugs or have a feature you'd like to see implemented:
@@ -99,6 +98,11 @@ Note that the default user interface for Taghound's tag manipulation will be hid
 4. Filter media items by a specific tag when using the list view of the media library
 
 == Changelog ==
+
+= 2.0.0 =
+* FEATURE: Supports v2 of the Clarifai API! You will need to generate an API token to continue using the product.
+* FEATURE: Run the bulk tagger in upload-only mode.
+* Removes support for checking your usage stats in WordPress. Clarifai no longer supports this.
 
 = 1.2.0 =
 * FEATURE: Adds the `tmt_tag_taxonomy` filter to allow users to customize the taxonomy used to store tags
