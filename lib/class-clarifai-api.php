@@ -46,33 +46,17 @@ class Client {
 	 * Get tags for an image
 	 *
 	 * @param  string $image_path_or_url File path or URL to image
-	 * @param  int	  $post_id			 WP Post ID
-	 * @return array              		 Array ( tags => array, doc_id => int )
+	 * @return array              		 Array ( tags => array )
 	 */
-	public function get_tags_for_image( $image_path_or_url, $post_id ) {
-		$image = array();
-
-		if ( tmt_is_upload_only() ) {
-			$image['base64'] = \base64_encode(file_get_contents($image_path_or_url));
-		} else {
-			$image['url'] = $image_path_or_url;
-		}
-
+	protected function get_tags_for_inputs( $inputs ) {
 		$data = array(
-			'inputs' => array(
-				array(
-					'data' => array(
-						'image' => $image,
-					),
-					'id' => (string) $post_id,
-				),
-			),
+			'inputs' => $inputs,
 		);
 
 		try {
 			$results = $this->_make_request( $data );
 
-			return $results->outputs[0];
+			return $results;
 		} catch ( \Exception $e ) {
 			return $e;
 		}
@@ -81,28 +65,30 @@ class Client {
 	/**
 	 * Get tags for multiple images
 	 *
-	 * @param  Array $image_urls  Array of image URLs
+	 * @param  Array $images  Array of image objects
 	 * @return Array 			  Tag responses
 	 */
-	public function get_tags_for_images( $image_urls ) {
-		$args = array(
-			'endpoint' => 'models',
-		);
+	public function get_tags_for_images( $images ) {
+		$inputs = array();
 
-		$image_url_string = '';
-		foreach ( $image_urls as $id => $url ) {
-			$image_url_string .= 'url=' . $url . '&local_id=' . $id . '&';
+		foreach ($images as $image) {
+			$input = array();
+
+			if ( tmt_is_upload_only() ) {
+				$input['base64'] = \base64_encode( file_get_contents( get_attached_file( $image->ID ) ) );
+			} else {
+				$input['url'] = \wp_get_attachment_image_src( $image->ID, 'large' )[0];
+			}
+
+			$inputs[] = array(
+				'data' => array(
+					'image' => $input,
+				),
+				'id' => (string) $image->ID,
+			);
 		}
 
-		$args['post'] = $image_url_string;
-
-		try {
-			$results = $this->_make_request( $args );
-
-			return $results;
-		} catch ( \Exception $e ) {
-			return $e;
-		}
+		return $this->get_tags_for_inputs( $inputs );
 	}
 
 	/**

@@ -58,15 +58,11 @@ class Bulk_Tagger_Service {
 
 		// Get that many images from repository.
 		$images = $this->untagged_images( array( 'posts_per_page' => $this->max_batch_size, 'post__not_in' => $result['skip'] ) );
-		$image_urls = array();
-		foreach ( $images as $image ) {
-			$image_urls[ $image->ID ] = $image->guid;
-		}
+		$tagger = new Tagger_Service( $this->api );
+		$results = $tagger->tag_images( $images );
 
-		$results = $this->api->get_tags_for_images( $image_urls );
-
-		if ( 'OK' === $results['status_code'] ) {
-			$tags = $this->process_tag_results( $results['results'] );
+		if ( 'Ok' === $results->status->description ) {
+			$tags = $tagger->process_tag_results( $results->outputs );
 			$result['tagged'] += count( $tags );
 			$result['failed'] = $this->errors;
 
@@ -74,7 +70,7 @@ class Bulk_Tagger_Service {
 		} else {
 			// Something bad happened.
 			$result['error'] = true;
-			$result['error_message'] = $results['status_msg'];
+			$result['error_message'] = $results->status->description;
 			$result['results'] = $results;
 		}
 
@@ -91,16 +87,15 @@ class Bulk_Tagger_Service {
 		$tags = array();
 
 		foreach ( $results as $result ) {
-			if ( 'OK' == $result['status_code'] ) {
-				$tagger = new Tagger_Service( $this->api );
-				$tags[] = $tagger->store_tag_info( $result );
-			} else {
+			if ( 'Ok' != $result->status->description ) {
 				$this->errors[] = array(
-					'filename' => basename( $result['url'] ),
-					'post_id' => $result['local_id'],
-					'status_code' => $result['status_code'],
-					'status_msg' => $result['status_msg'],
+					'filename' => $result->input->url,
+					'post_id' => $result->input->id,
+					'status_code' => $result->status->code,
+					'status_msg' => $result->status->description,
 				);
+			} else {
+				$tags[] = $result;
 			}
 		}
 

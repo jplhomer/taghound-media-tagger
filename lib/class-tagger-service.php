@@ -28,46 +28,33 @@ class Tagger_Service {
 	 * Tag a single uploaded image
 	 *
 	 * @param  string $image_path_or_url Image path or ID
-	 * @param  int    $post_id              WP Post ID
 	 *
-	 * @return array                     Tags added to the image
+	 * @return array                     Results from Clarifai
 	 */
-	public function tag_single_image( $image_path_or_url, $post_id ) {
-		$tags = $this->api->get_tags_for_image( $image_path_or_url, $post_id );
+	public function tag_images( $images ) {
+		$results = $this->api->get_tags_for_images( $images );
 
-		if ( ! $tags ) {
-			return $post_id;
-		}
-
-		return $this->store_tag_info( $tags );
+		return $this->store_tag_info( $results );
 	}
 
 	/**
 	 * Persist Clarifai tag data
 	 *
-	 * @param  array $resultset 	Clarifai Tag result set
+	 * @param  array $results 	Clarifai Tag result set
 	 * @return array      			Tags
 	 */
-	public function store_tag_info( $resultset ) {
-		$post_id = (int) $resultset->input->id;
-		$tags = array_map(function($concept) {
-			return $concept->name;
-		}, $resultset->data->concepts);
+	public function store_tag_info( $results ) {
+		foreach ($results->outputs as $output) {
+			$post_id = (int) $output->input->id;
 
-		wp_set_object_terms( $post_id, $tags, tmt_get_tag_taxonomy() );
+			$tags = array_map(function($concept) {
+				return $concept->name;
+			}, $output->data->concepts);
 
-		$this->preserve_tag_resultset( $post_id, $resultset );
+			wp_set_object_terms( $post_id, $tags, tmt_get_tag_taxonomy() );
+			update_post_meta( $post_id, TMT_POST_META_KEY, $results );
+		}
 
-		return $tags;
-	}
-
-	/**
-	 * Preserve a tag resultset to database
-	 *
-	 * @param int   $post_id   Post ID
-	 * @param array $resultset Resultset
-	 */
-	public function preserve_tag_resultset( $post_id, $resultset ) {
-		update_post_meta( $post_id, TMT_POST_META_KEY, $resultset );
+		return $results;
 	}
 }
