@@ -44,14 +44,14 @@ class Tagger_Service {
 	 * @return array      			Tags
 	 */
 	public function store_tag_info( $results ) {
-		foreach ($results->outputs as $output) {
+		foreach ( $results->outputs as $output ) {
 			$post_id = (int) $output->input->id;
 
-			if ($output->status->description != 'Ok') {
+			if ( $output->status->description != 'Ok' ) {
 				continue;
 			}
 
-			$tags = array_map(function($concept) {
+			$tags = array_map(function( $concept ) {
 				return $concept->name;
 			}, $output->data->concepts);
 

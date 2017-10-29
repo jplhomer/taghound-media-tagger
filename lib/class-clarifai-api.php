@@ -71,7 +71,7 @@ class Client {
 	public function get_tags_for_images( $images ) {
 		$inputs = array();
 
-		foreach ($images as $image) {
+		foreach ( $images as $image ) {
 			$input = array();
 
 			if ( tmt_is_upload_only() ) {
@@ -109,7 +109,7 @@ class Client {
 		]);
 
 		$response = wp_remote_post( $url, array(
-			'body' => json_encode($data),
+			'body' => json_encode( $data ),
 			'headers' => array(
 				'Content-Type' => 'application/json',
 				'Authorization' => "Key {$this->api_key}",

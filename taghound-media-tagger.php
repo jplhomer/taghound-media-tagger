@@ -172,10 +172,10 @@ class Taghound_Media_Tagger {
 			return $post_id;
 		}
 
-		$image = get_post($post_id);
+		$image = get_post( $post_id );
 
 		$tagger = new Tagger_Service( tmt_get_cf_client() );
-		$tagger->tag_images( array($image) );
+		$tagger->tag_images( array( $image ) );
 
 		return $post_id;
 	}
