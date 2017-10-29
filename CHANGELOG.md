@@ -1,5 +1,10 @@
 ==Changelog==
 
+= 2.0.0 =
+* FEATURE: Supports v2 of the Clarifai API! You will need to generate an API token to continue using the product.
+* FEATURE: Run the bulk tagger in upload-only mode.
+* Removes support for checking your usage stats in WordPress. Clarifai no longer supports this.
+
 = 1.2.0 =
 * FEATURE: Adds the `tmt_tag_taxonomy` filter to allow users to customize the taxonomy used to store tags
 

@@ -8,15 +8,7 @@ use Taghound_Media_Tagger\Clarifai\Api\Client;
  * @return bool
  */
 function tmt_can_be_enabled() {
-	$can_be_enabled = false;
-	$client_id = get_option( TMT_SETTING_PREFIX . 'client_id' );
-	$client_secret = get_option( TMT_SETTING_PREFIX . 'client_secret' );
-
-	if ( ! empty( $client_id ) && ! empty( $client_secret ) ) {
-		$can_be_enabled = true;
-	}
-
-	return $can_be_enabled;
+	return ! empty( get_option( TMT_SETTING_PREFIX . 'api_key' ) );
 }
 
 /**
@@ -50,28 +42,7 @@ function tmt_is_upload_only() {
  * @return Client  Clarifai API client
  */
 function tmt_get_cf_client() {
-	return new Client( array(
-		'client_id' => get_option( TMT_SETTING_PREFIX . 'client_id' ),
-		'client_secret' => get_option( TMT_SETTING_PREFIX . 'client_secret' ),
-	));
-}
-
-/**
- * Returns the image path or URL based on the upload_only setting
- *
- * @param  int $post_id    WP Post ID
- *
- * @return string
- */
-function tmt_get_image_path_or_url( $post_id ) {
-	if ( tmt_is_upload_only() ) {
-		$image_path_or_url = get_attached_file( $post_id );
-	} else {
-		$attachment = wp_get_attachment_image_src( $post_id, 'large' );
-		$image_path_or_url = $attachment[0];
-	}
-
-	return $image_path_or_url;
+	return new Client( get_option( TMT_SETTING_PREFIX . 'api_key' ) );
 }
 
 /**

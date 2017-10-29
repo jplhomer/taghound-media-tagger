@@ -10,7 +10,7 @@ class Client {
 	 *
 	 * @var string
 	 */
-	protected $api_version = 'v1';
+	protected $api_version = 'v2';
 
 	/**
 	 * Base API URL
@@ -20,170 +20,41 @@ class Client {
 	protected $api_base_url = 'https://api.clarifai.com';
 
 	/**
-	 * Client ID
+	 * API Key
 	 *
 	 * @var string
 	 */
-	protected $client_id = '';
+	protected $api_key = '';
 
 	/**
-	 * Client Secret
+	 * Use Clarifai's General model for predictions.
 	 *
 	 * @var string
 	 */
-	protected $client_secret = '';
+	protected $general_model = 'aaa03c23b3724a16a56b629203edc62c';
 
 	/**
 	 * Construct the API
 	 *
-	 * @param array $options Options
-	 * @throws \Exception 	If missing options.
+	 * @param string $api_key API Key
 	 */
-	public function __construct( $options ) {
-		if ( empty( $options['client_id'] ) || empty( $options['client_secret'] ) ) {
-			throw new \Exception( 'Please provide a client_id and client_secret' );
-		}
-
-		$this->client_id = $options['client_id'];
-		$this->client_secret = $options['client_secret'];
-	}
-
-	/**
-	 * Determines if a token object is expired using a custom value we calculate
-	 *
-	 * @param  array $token  Token with 'expiration_date'
-	 * @return boolean
-	 */
-	protected function is_token_expired( $token ) {
-		return time() > $token['expiration_date'];
-	}
-
-	/**
-	 * Gets the API keys set on the object
-	 *
-	 * @return array
-	 */
-	protected function get_api_keys() {
-		return array(
-			'client_id' => $this->client_id,
-			'client_secret' => $this->client_secret,
-		);
-	}
-
-	/**
-	 * Gets the auth token. Generates ones if it's invalid or expired.
-	 *
-	 * @return array Token object
-	 */
-	protected function get_auth_token() {
-		$token = get_option( TMT_TOKEN_SETTING );
-
-		if ( ! $token || empty( $token['access_token'] ) || $this->is_token_expired( $token ) ) {
-			return $this->renew_auth_token();
-		}
-
-		return $token;
-	}
-
-	/**
-	 * Get a new auth token
-	 *
-	 * @return array Auth token array
-	 */
-	protected function renew_auth_token() {
-		$keys = $this->get_api_keys();
-
-		$args = array(
-			'endpoint' => 'token',
-			'post' => array(
-				'client_id' => $keys['client_id'],
-			    'client_secret' => $keys['client_secret'],
-			    'grant_type' => 'client_credentials',
-			),
-		);
-
-		$results = $this->_make_request( $args, true );
-
-		// Calculate the expiration date of this token.
-		$results['expiration_date'] = time() + $results['expires_in'];
-
-		update_option( TMT_TOKEN_SETTING, $results );
-
-		return $results;
-	}
-
-	/**
-	 * Get info about max batch size, etc from the info endpoint
-	 *
-	 * @return array  Info set from Clarifai
-	 */
-	public function get_info() {
-		$args = array(
-			'endpoint' => 'info',
-		);
-
-		try {
-			$results = $this->_make_request( $args );
-
-			return $results['results'];
-		} catch ( \Exception $e ) {
-			return $e;
-		}
+	public function __construct( $api_key ) {
+		$this->api_key = $api_key;
 	}
 
 	/**
 	 * Get tags for an image
 	 *
-	 * @param  string $image_path_or_url File path or URL to image
-	 * @param  int	  $post_id			 WP Post ID
-	 * @return array              		 Array ( tags => array, doc_id => int )
+	 * @param  string $inputs 				 Inputs formatted as required for consumption
+	 * @return array              		 Array ( tags => array )
 	 */
-	public function get_tags_for_image( $image_path_or_url, $post_id ) {
-		$args = array(
-			'endpoint' => 'tag',
+	protected function get_tags_for_inputs( $inputs ) {
+		$data = array(
+			'inputs' => $inputs,
 		);
 
-		if ( tmt_is_upload_only() ) {
-			$args['post'] = array(
-				'encoded_data' => new \CURLFile( $image_path_or_url ),
-				'local_id' => $post_id,
-			);
-		} else {
-			$args['post'] = array(
-				'url' => $image_path_or_url,
-				'local_id' => $post_id,
-			);
-		}
-
 		try {
-			$results = $this->_make_request( $args );
-
-			return $results['results'][0];
-		} catch ( \Exception $e ) {
-			return $e;
-		}
-	}
-
-	/**
-	 * Get tags for multiple images
-	 *
-	 * @param  Array $image_urls  Array of image URLs
-	 * @return Array 			  Tag responses
-	 */
-	public function get_tags_for_images( $image_urls ) {
-		$args = array(
-			'endpoint' => 'tag',
-		);
-
-		$image_url_string = '';
-		foreach ( $image_urls as $id => $url ) {
-			$image_url_string .= 'url=' . $url . '&local_id=' . $id . '&';
-		}
-
-		$args['post'] = $image_url_string;
-
-		try {
-			$results = $this->_make_request( $args );
+			$results = $this->_make_request( $data );
 
 			return $results;
 		} catch ( \Exception $e ) {
@@ -192,68 +63,59 @@ class Client {
 	}
 
 	/**
-	 * Get usage data for a user's account
+	 * Get tags for multiple images
 	 *
-	 * @return Usage object or Exception
+	 * @param  Array $images  Array of image objects
+	 * @return Array 			  Tag responses
 	 */
-	public function get_usage_data() {
-		$args = array(
-			'endpoint' => 'usage',
-		);
+	public function get_tags_for_images( $images ) {
+		$inputs = array();
 
-		try {
-			$results = $this->_make_request( $args );
+		foreach ( $images as $image ) {
+			$input = array();
 
-			return new Usage( $results );
-		} catch ( \Exception $e ) {
-			return $e;
+			if ( tmt_is_upload_only() ) {
+				$input['base64'] = \base64_encode( file_get_contents( get_attached_file( $image->ID ) ) );
+			} else {
+				$input['url'] = \wp_get_attachment_image_src( $image->ID, 'large' )[0];
+			}
+
+			$inputs[] = array(
+				'data' => array(
+					'image' => $input,
+				),
+				'id' => (string) $image->ID,
+			);
 		}
+
+		return $this->get_tags_for_inputs( $inputs );
 	}
 
 	/**
 	 * Performs the general API request
 	 *
-	 * @param  array   $args           Arguments
-	 * @param  boolean $authenticating Whether this is the token exchange request
+	 * @param array $data              Data
 	 *
 	 * @throws \Exception 			   If there was an error.
 	 * @return object                  JSON-decoded response
 	 */
-	protected function _make_request( $args, $authenticating = false ) {
-		$is_post = ! empty( $args['post'] );
+	protected function _make_request( $data ) {
+		$url = implode('/', [
+			$this->api_base_url,
+			$this->api_version,
+			'models',
+			$this->general_model,
+			'outputs',
+		]);
 
-		if ( ! $authenticating ) {
-			$token = $this->get_auth_token();
-			$args = wp_parse_args( $args, array(
-				'headers' => array(
-					"Authorization: Bearer {$token['access_token']}",
-				),
-			));
-		}
+		$response = wp_remote_post( $url, array(
+			'body' => json_encode( $data ),
+			'headers' => array(
+				'Content-Type' => 'application/json',
+				'Authorization' => "Key {$this->api_key}",
+			),
+		));
 
-		$url = $this->api_base_url . '/' . $this->api_version . '/' . $args['endpoint'] . '/';
-
-		$ch = curl_init();
-		curl_setopt( $ch, CURLOPT_URL, $url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-
-		if ( $is_post ) {
-			curl_setopt( $ch, CURLOPT_POST, 1 );
-			curl_setopt( $ch, CURLOPT_POSTFIELDS, $args['post'] );
-		}
-
-		if ( ! empty( $args['headers'] ) ) {
-			curl_setopt( $ch, CURLOPT_HTTPHEADER, $args['headers'] );
-		}
-
-		$result = curl_exec( $ch );
-
-		if ( ! $result ) {
-			throw new \Exception( curl_error( $ch ) );
-		}
-
-		curl_close( $ch );
-
-		return json_decode( $result, true );
+		return json_decode( wp_remote_retrieve_body( $response ) );
 	}
 }

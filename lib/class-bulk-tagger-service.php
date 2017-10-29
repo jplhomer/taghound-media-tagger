@@ -25,6 +25,13 @@ class Bulk_Tagger_Service {
 	protected $errors = array();
 
 	/**
+	 * This is hardcoded as of Clarifai V2
+	 *
+	 * @var int
+	 */
+	protected $max_batch_size = 128;
+
+	/**
 	 * Construct the bulk service class
 	 *
 	 * @param Client $api Clarifai api client
@@ -49,25 +56,13 @@ class Bulk_Tagger_Service {
 			'skip' => array(),
 		));
 
-		// See what our max batch size is.
-		$info = $this->api->get_info();
-		$max_batch_size = $info['max_batch_size'];
-
-		if ( 0 == $max_batch_size ) {
-			return false;
-		}
-
 		// Get that many images from repository.
-		$images = $this->untagged_images( array( 'posts_per_page' => $max_batch_size, 'post__not_in' => $result['skip'] ) );
-		$image_urls = array();
-		foreach ( $images as $image ) {
-			$image_urls[ $image->ID ] = $image->guid;
-		}
+		$images = $this->untagged_images( array( 'posts_per_page' => $this->max_batch_size, 'post__not_in' => $result['skip'] ) );
+		$tagger = new Tagger_Service( $this->api );
+		$results = $tagger->tag_images( $images );
 
-		$results = $this->api->get_tags_for_images( $image_urls );
-
-		if ( 'OK' === $results['status_code'] ) {
-			$tags = $this->process_tag_results( $results['results'] );
+		if ( 'Ok' === $results->status->description ) {
+			$tags = $this->process_tag_results( $results->outputs );
 			$result['tagged'] += count( $tags );
 			$result['failed'] = $this->errors;
 
@@ -75,7 +70,7 @@ class Bulk_Tagger_Service {
 		} else {
 			// Something bad happened.
 			$result['error'] = true;
-			$result['error_message'] = $results['status_msg'];
+			$result['error_message'] = $results->status->description;
 			$result['results'] = $results;
 		}
 
@@ -92,29 +87,19 @@ class Bulk_Tagger_Service {
 		$tags = array();
 
 		foreach ( $results as $result ) {
-			if ( 'OK' == $result['status_code'] ) {
-				$tagger = new Tagger_Service( $this->api );
-				$tags[] = $tagger->store_tag_info( $result );
-			} else {
+			if ( 'Ok' != $result->status->description ) {
 				$this->errors[] = array(
-					'filename' => basename( $result['url'] ),
-					'post_id' => $result['local_id'],
-					'status_code' => $result['status_code'],
-					'status_msg' => $result['status_msg'],
+					'filename' => $result->input->url,
+					'post_id' => $result->input->id,
+					'status_code' => $result->status->code,
+					'status_msg' => $result->status->description,
 				);
+			} else {
+				$tags[] = $result;
 			}
 		}
 
 		return $tags;
-	}
-
-	/**
-	 * Can bulk tagging happen?
-	 *
-	 * @return boolean
-	 */
-	public static function enabled() {
-		return tmt_can_be_enabled() && ! tmt_is_upload_only();
 	}
 
 	/**

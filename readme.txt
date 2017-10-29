@@ -2,6 +2,7 @@
 Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
+Requires PHP: 5.4
 Tested up to: 4.7
 Stable tag: 1.2.0
 License: GPLv2 or later
@@ -125,4 +126,8 @@ Note that the default user interface for Taghound's tag manipulation will be hid
 
 = 1.0.0 =
 * Taghound Media Tagger.
+
+== Upgrade Notice ==
+= 2.0.0 =
+This version supports the Clarifai v2 API, since v1 is now deprecated. You will need to create an API token to continue using Taghound!
 

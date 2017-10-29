@@ -42,18 +42,17 @@ class Taghound_Media_Tagger {
 	 */
 	public function __construct() {
 		if ( version_compare( PHP_VERSION, '5.5', '<' ) ) {
-		    add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>" . __( 'Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger' ) . "</p></div>';" ) );
-		    return;
+			add_action( 'admin_notices', create_function( '', "echo '<div class=\"error\"><p>" . __( 'Taghound Media Tagger requires PHP 5.5 to function properly. Please upgrade PHP or deactivate Taghound Media Tagger.', 'taghound-media-tagger' ) . "</p></div>';" ) );
+			return;
 		}
 
 		define( 'TMT_SETTING_PREFIX', 'tmt_' );
-		define( 'TMT_TOKEN_SETTING', TMT_SETTING_PREFIX . 'clarifai_token' );
+		define( 'TMT_API_KEY_SETTING', TMT_SETTING_PREFIX . 'clarifai_api_key' );
 		define( 'TMT_POST_META_KEY', TMT_SETTING_PREFIX . 'clarifai_data' );
 		define( 'TMT_TAG_SLUG', 'tmt_tag' );
 
 		include 'taghound-media-tagger-functions.php';
 		include 'lib/class-clarifai-api.php';
-		include 'lib/class-clarifai-api-usage.php';
 		include 'lib/class-valid-image-specification.php';
 		include 'lib/class-tagger-service.php';
 		include 'lib/class-bulk-tagger-service.php';
@@ -173,9 +172,10 @@ class Taghound_Media_Tagger {
 			return $post_id;
 		}
 
-		$image_path_or_url = tmt_get_image_path_or_url( $post_id );
+		$image = get_post( $post_id );
+
 		$tagger = new Tagger_Service( tmt_get_cf_client() );
-		$tagger->tag_single_image( $image_path_or_url, $post_id );
+		$tagger->tag_images( array( $image ) );
 
 		return $post_id;
 	}
