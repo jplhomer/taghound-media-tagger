@@ -2,6 +2,7 @@
 Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
+Requires PHP: 5.4
 Tested up to: 4.7
 Stable tag: 1.2.0
 License: GPLv2 or later
