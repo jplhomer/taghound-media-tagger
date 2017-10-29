@@ -50,24 +50,24 @@ class Client {
 	 * @return array              		 Array ( tags => array, doc_id => int )
 	 */
 	public function get_tags_for_image( $image_path_or_url, $post_id ) {
+		$image = array();
+
 		if ( tmt_is_upload_only() ) {
-			$args['post'] = array(
-				'encoded_data' => new \CURLFile( $image_path_or_url ),
-			);
+			$image['base64'] = \base64_encode(file_get_contents($image_path_or_url));
 		} else {
-			$data = array(
-				'inputs' => array(
-					array(
-						'data' => array(
-							'image' => array(
-								'url' => $image_path_or_url,
-							),
-						),
-						'id' => $post_id,
-					),
-				),
-			);
+			$image['url'] = $image_path_or_url;
 		}
+
+		$data = array(
+			'inputs' => array(
+				array(
+					'data' => array(
+						'image' => $image,
+					),
+					'id' => (string) $post_id,
+				),
+			),
+		);
 
 		try {
 			$results = $this->_make_request( $data );
