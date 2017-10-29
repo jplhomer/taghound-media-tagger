@@ -45,7 +45,7 @@ class Client {
 	/**
 	 * Get tags for an image
 	 *
-	 * @param  string $image_path_or_url File path or URL to image
+	 * @param  string $inputs 				 Inputs formatted as required for consumption
 	 * @return array              		 Array ( tags => array )
 	 */
 	protected function get_tags_for_inputs( $inputs ) {

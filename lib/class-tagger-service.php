@@ -27,7 +27,7 @@ class Tagger_Service {
 	/**
 	 * Tag a single uploaded image
 	 *
-	 * @param  string $image_path_or_url Image path or ID
+	 * @param  string $images 					 Array of image objects
 	 *
 	 * @return array                     Results from Clarifai
 	 */
@@ -47,7 +47,7 @@ class Tagger_Service {
 		foreach ( $results->outputs as $output ) {
 			$post_id = (int) $output->input->id;
 
-			if ( $output->status->description != 'Ok' ) {
+			if ( 'Ok' != $output->status->description ) {
 				continue;
 			}
 
