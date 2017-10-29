@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Taghound Media Tagger
- * Version: 2.0.0
+ * Version: 2.0.1
  * Description: Automatically adds tags to new images using the Clarifai API.
  * Author: Joshua P. Larson
  * Author URI: http://jplhomer.org
