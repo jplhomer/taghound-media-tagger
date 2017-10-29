@@ -1,5 +1,8 @@
 ==Changelog==
 
+= 2.0.1 =
+* Minor updates to the Readme and required PHP version.
+
 = 2.0.0 =
 * FEATURE: Supports v2 of the Clarifai API! You will need to generate an API token to continue using the product.
 * FEATURE: Run the bulk tagger in upload-only mode.

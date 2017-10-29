@@ -2,8 +2,8 @@
 Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
-Requires PHP: 5.4
-Tested up to: 4.7
+Requires PHP: 5.5
+Tested up to: 4.8.2
 Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -59,9 +59,9 @@ Special thanks to [Kevin Fish](http://www.kevinfishdesigns.com/) for his work on
 1. Upload 'taghound-media-tagger' to the '/wp-content/plugins/' directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit the [Clarifai Developer Portal](https://developer.clarifai.com/) and create a free or paid account
-1. Create an application with Clarifai, and copy the **Client ID** and **Client Secret** from the developer portal
+1. Create an application with Clarifai, and copy the **API Key** from the developer portal
 1. Visit the Taghound settings page under Settings
-1. Paste in the **Client ID** and **Client Secret** from step 4 and click "Save Changes"
+1. Paste in the **API Key** from step 4 and click "Save Changes"
 1. On the same page, click the checkbox "Enable for all new Images" to have Taghound Media Tagger begin tagging new images!
 
 == Frequently Asked Questions ==
@@ -76,10 +76,10 @@ A. Clarifai processes your images and returns a list of associated keywords. Add
 A. Yes! Visit the **Settings > Taghound** page and use the Bulk Tagger tool.
 
 = Q. What if an image gets tagged with something I don't like? =
-A. Simply untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
+A. You may untag the image by clicking the 'X'. This is similar to how you would remove a tag from a post.
 
 = Q. Can I use this plugin with other 3rd party plugins like Media Library Assistant? =
-A. Yes! We've provided a hook for you to choose where to store the tags. Simply pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy` inside your theme's **functions.php** file.
+A. Yes! We've provided a hook for you to choose where to store the tags. Pass a function that returns the slug of the taxonomy you'd like to use to `tmt_tag_taxonomy` inside your theme's **functions.php** file.
 
 **[See the documentation here](https://gist.github.com/jplhomer/05a6033e544c16cf335f2b163ff33069).**
 
