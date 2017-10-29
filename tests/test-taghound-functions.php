@@ -14,21 +14,6 @@ class TaghoundFunctionsTest extends WP_UnitTestCase {
 		$this->assertTrue( tmt_is_upload_only() );
 	}
 
-	function test_image_path_or_url_function_works() {
-		$option_name = TMT_SETTING_PREFIX . 'upload_only';
-		$post_id = Attachment_Helper::create_image_attachment( dirname( __FILE__ ) . '/assets/test-image.jpeg' );
-
-		update_option( $option_name, '' );
-		$result = tmt_get_image_path_or_url($post_id);
-
-		$this->assertTrue(!!stristr($result, 'http'), "{$result} should be a public URL");
-
-		update_option( $option_name, 'on' );
-		$result = tmt_get_image_path_or_url($post_id);
-
-		$this->assertFalse(!!stristr($result, 'http'), "{$result} should not be a public URL");
-	}
-
 	public function test_tags_can_use_alternate_taxonomy() {
 		$new_tax = 'my_dummy_taxonomy';
 

@@ -47,12 +47,16 @@ class Tagger_Service {
 		foreach ($results->outputs as $output) {
 			$post_id = (int) $output->input->id;
 
+			if ($output->status->description != 'Ok') {
+				continue;
+			}
+
 			$tags = array_map(function($concept) {
 				return $concept->name;
 			}, $output->data->concepts);
 
 			wp_set_object_terms( $post_id, $tags, tmt_get_tag_taxonomy() );
-			update_post_meta( $post_id, TMT_POST_META_KEY, $results );
+			update_post_meta( $post_id, TMT_POST_META_KEY, $output );
 		}
 
 		return $results;

@@ -37,48 +37,45 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
 						  ->setConstructorArgs( ['my_api_key'] )
 						  ->setMethods( array( 'get_tags_for_images' ) )
-						  ->getMock();
+							->getMock();
 
-		$resultset = array(
-			'docid' => 15512461224882631443,
-			'url' => 'https://samples.clarifai.com/metro-north.jpg',
-			'status_code' => 'OK',
-			'status_msg' => 'OK',
-			'local_id' => '',
-			'result' => array(
-				'tag' => array(
-					'concept_ids' => array( 'ai_HLmqFqBf', 'ai_fvlBqXZR', 'ai_Xxjc3MhT', 'ai_6kTjGfF6', 'ai_RRXLczch', 'ai_VRmbGVWh', 'ai_SHNDcmJ3', 'ai_jlb9q33b', 'ai_46lGZ4Gm', 'ai_tr0MBp64', 'ai_l4WckcJN', 'ai_2gkfMDsM', 'ai_CpFBRWzD', 'ai_786Zr311', 'ai_6lhccv44', 'ai_971KsJkn', 'ai_WBQfVV0p', 'ai_dSCKh8xv', 'ai_TZ3C79C6', 'ai_VSVscs9k' ),
-					'classes' => array( 'train', 'railway', 'transportation system', 'station', 'train', 'travel', 'tube', 'commuter', 'railway', 'traffic', 'blur', 'platform', 'urban', 'no person', 'business', 'track', 'city', 'fast', 'road', 'terminal' ),
-					'probs' => array( 0.9989112019538879, 0.9975532293319702, 0.9959157705307007, 0.9925730228424072, 0.9925559759140015, 0.9878921508789063, 0.9816359281539917, 0.9712483286857605, 0.9690325260162354, 0.9687051773071289, 0.9667078256607056, 0.9624242782592773, 0.960752010345459, 0.9586490392684937, 0.9572030305862427, 0.9494642019271851, 0.940894365310669, 0.9399334192276001, 0.9312160611152649, 0.9230834245681763 ),
-				),
+		$output = (object) array(
+			'input' => (object) array(
+				'id' => '',
+				'url' => 'http://foo.bar/image.jpg',
 			),
-			'docid_str' => '31fdb2316ff87fb5d747554ba5267313',
+			'status' => (object) array(
+				'code' => 10000,
+				'description' => 'Ok',
+			),
+			'data' => (object) array(
+				'concepts' => array(
+					(object) array( 'name' => 'apple' ),
+					(object) array( 'name' => 'banana' ),
+					(object) array( 'name' => 'pear' ),
+				)
+			)
 		);
 
-		// Stub Clarifai response tags
-		$this->response_tags = array(
-			'status_code' => 'OK',
-			'status_msg' => 'All images in request have completed successfully. ',
-			'meta' => array(
-				'tag' => array(
-					'timestamp' => 1451945197.398036,
-					'model' => 'general-v1.3',
-					'config' => '34fb1111b4d5f67cf1b8665ebc603704',
-				),
+		$this->response = (object) array(
+			'status' => (object) array(
+				'code' => 10000,
+				'description' => 'Ok',
 			),
-			'results' => array(),
+			'outputs' => array()
 		);
 
 		for ( $i = 0; $i < 25; $i++ ) {
-			$set = $resultset;
-			$set['local_id'] = "${post_ids[$i]}";
+			$set = clone $output;
+			$set->input = (clone $set->input);
+			$set->input->id = (string) $post_ids[$i];
 
 			if ( $i < $this->num_bad_images ) {
-				$set['status_code'] = 'ERROR';
-				$set['status_msg'] = 'This image was weird or something.';
+				$set->status = (clone $set->status);
+				$set->status->description = 'This image was weird or something.';
 			}
 
-			$this->response_tags['results'][] = $set;
+			$this->response->outputs[$i] = $set;
 		}
 	}
 
@@ -95,7 +92,7 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 	function test_bulk_tagging() {
 	    $this->api->expects( $this->any() )
 				  ->method( 'get_tags_for_images' )
-				  ->will( $this->returnValue( $this->response_tags ) );
+				  ->will( $this->returnValue( $this->response ) );
 
 		$bulk_tagger = new Bulk_Tagger_Service( $this->api );
 
@@ -114,10 +111,10 @@ class BulkTaggerServiceTest extends WP_UnitTestCase {
 		$this->assertEquals( 'This image was weird or something.', $first_failed['status_msg'] );
 		$this->assertTrue( isset( $first_failed['post_id'] ) );
 
-		$first_tagged_result = $this->response_tags['results'][ 0 + $this->num_bad_images ];
+		$first_tagged_result = $this->response->outputs[ 0 + $this->num_bad_images ];
 		$this->assertEquals(
 			$first_tagged_result,
-			get_post_meta( $first_tagged_result['local_id'], TMT_POST_META_KEY, true ),
+			get_post_meta( $first_tagged_result->input->id, TMT_POST_META_KEY, true ),
 			'Tag data should be persisted on the Post object'
 		);
 

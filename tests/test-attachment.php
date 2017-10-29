@@ -42,20 +42,31 @@ class AttachmentTest extends WP_UnitTestCase {
 		// Create a mock of the API
 		$this->api = $this->getMockBuilder( '\Taghound_Media_Tagger\Clarifai\API\Client' )
 						  ->setConstructorArgs( ['my_api_key'] )
-						  ->setMethods( array( 'get_tags_for_image' ) )
+						  ->setMethods( array( 'get_tags_for_images' ) )
 						  ->getMock();
 
 		$this->tagger = new Tagger_Service( $this->api );
 
 		// Mock tag data
-		$this->tag_data = array(
-			'docid' => 1234,
-			'local_id' => $this->attachment_image->ID,
-			'result' => array(
-				'tag' => array(
-					'classes' => array('apple', 'banana', 'pear'),
-				),
-			),
+		$this->tag_data = (object) array(
+			'outputs' => array(
+				(object) array(
+					'input' => (object) array(
+						'id' => $this->attachment_image->ID
+					),
+					'status' => (object) array(
+						'code' => 10000,
+						'description' => 'Ok',
+					),
+					'data' => (object) array(
+						'concepts' => array(
+							(object) array( 'name' => 'apple' ),
+							(object) array( 'name' => 'banana' ),
+							(object) array( 'name' => 'pear' ),
+						)
+					)
+				)
+			)
 		);
 	}
 
@@ -64,13 +75,13 @@ class AttachmentTest extends WP_UnitTestCase {
 	 */
 	function test_tag_data_stored_with_image() {
 		$this->api->expects( $this->any() )
-				  ->method( 'get_tags_for_image' )
+				  ->method( 'get_tags_for_images' )
 				  ->will( $this->returnValue( $this->tag_data ) );
 
 		// Get mock tags for the image
-	    $this->tagger->tag_single_image( tmt_get_image_path_or_url($this->attachment_image->ID), $this->attachment_image->ID );
+	  $this->tagger->tag_images( array($this->attachment_image) );
 
-		$this->assertEquals( $this->tag_data, get_post_meta( $this->attachment_image->ID, TMT_POST_META_KEY, true ) );
+		$this->assertEquals( $this->tag_data->outputs[0], get_post_meta( $this->attachment_image->ID, TMT_POST_META_KEY, true ) );
 	}
 
 	function tearDown() {
