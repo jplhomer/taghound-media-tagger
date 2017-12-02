@@ -57,7 +57,7 @@ class Bulk_Tagger_Service {
 		));
 
 		// Get that many images from repository.
-		$images = $this->untagged_images( array( 'posts_per_page' => $this->max_batch_size, 'post__not_in' => $result['skip'] ) );
+		$images = $this->untagged_images( array( 'posts_per_page' => $this->max_batch_size(), 'post__not_in' => $result['skip'] ) );
 		$tagger = new Tagger_Service( $this->api );
 		$results = $tagger->tag_images( $images );
 
@@ -75,6 +75,20 @@ class Bulk_Tagger_Service {
 		}
 
 		return $result;
+	}
+
+
+	/**
+	 * Intentionally limit max batch size to 1 if doing upload only.
+	 *
+	 * @return int
+	 */
+	public function max_batch_size() {
+		if (tmt_is_upload_only()) {
+			return 1;
+		}
+
+		return $this->max_batch_size;
 	}
 
 	/**
