@@ -3,8 +3,8 @@ Contributors: jplhomer
 Tags: media gallery, tagging, images, deep learning, neural network, admin
 Requires at least: 3.9
 Requires PHP: 5.5
-Tested up to: 4.8.2
-Stable tag: 2.0.1
+Tested up to: 4.9.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,10 @@ Note that the default user interface for Taghound's tag manipulation will be hid
 4. Filter media items by a specific tag when using the list view of the media library
 
 == Changelog ==
+
+= 2.0.2 =
+* Fixes bug where server would time out during upload-only bulk tagging events
+* Fixes visual bug introduced in tag picker in WordPress 4.9
 
 = 2.0.1 =
 * Minor updates to the Readme and required PHP version.
