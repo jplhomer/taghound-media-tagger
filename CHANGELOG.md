@@ -1,5 +1,9 @@
 ==Changelog==
 
+= 2.0.2 =
+* Fixes bug where server would time out during upload-only bulk tagging events
+* Fixes visual bug introduced in tag picker in WordPress 4.9
+
 = 2.0.1 =
 * Minor updates to the Readme and required PHP version.
 
