@@ -72,15 +72,15 @@ var IatTagBox, array_unique_noempty;
 			tagchecklist.empty();
 
 			$.each( current_tags, function( key, val ) {
-				var span, xbutton;
+				var listItem, xbutton;
 
 				val = $.trim( val );
 
 				if ( ! val )
 					return;
 
-				// Create a new span, and ensure the text is properly escaped.
-				span = $('<span />').text( val );
+				// Create a new li, and ensure the text is properly escaped.
+				listItem = $('<li />').text( val );
 
 				// If tags editing isn't disabled, create the X button.
 				if ( ! disabled ) {
@@ -110,11 +110,11 @@ var IatTagBox, array_unique_noempty;
 						}
 					});
 
-					span.prepend( '&nbsp;' ).prepend( xbutton );
+					listItem.prepend( '&nbsp;' ).prepend( xbutton );
 				}
 
-				// Append the span to the tag list.
-				tagchecklist.append( span );
+				// Append the listItem to the tag list.
+				tagchecklist.append( listItem );
 			});
 			// The buttons list is built now, give feedback to screen reader users.
 			IatTagBox.screenReadersMessage();
